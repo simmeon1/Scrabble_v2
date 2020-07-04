@@ -13,14 +13,14 @@ namespace Classes
             for (int i = 0; i < rowsAndColumns.Length; i++)
             {
                 rowsAndColumns[i] = new BoardTile[columnCount];
-                for (int j = 0; j < rowsAndColumns[i].Length; j++) rowsAndColumns[i][j] = new BoardTile();
+                for (int j = 0; j < rowsAndColumns[i].Length; j++) rowsAndColumns[i][j] = new BoardTile(rowIndex: i, columnIndex: j);
             }
             Tiles = rowsAndColumns;
         }
 
-        public void AddCharTile(int rowIndex, int columnIndex, CharTile c)
+        public void PlaceCharTile(int rowIndex, int columnIndex, CharTile c)
         {
-            Tiles[rowIndex][columnIndex].AddCharTile(c);
+            Tiles[rowIndex][columnIndex].PlaceCharTile(c);
         }
 
         public string PrintBoard()
