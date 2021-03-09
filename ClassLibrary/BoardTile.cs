@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Classes
+namespace ClassLibrary
 {
     public class BoardTile
     {
+        public int RowIndex { get; }
+        public int ColumnIndex { get; }
+        private CharTile CharTile { get; set; }
         public BoardTile(int rowIndex, int columnIndex, CharTile charTile = null)
         {
             RowIndex = rowIndex;
             ColumnIndex = columnIndex;
             CharTile = charTile;
         }
-
-        public int RowIndex { get; }
-        public int ColumnIndex { get; }
-        private CharTile CharTile { get; set; }
 
         public string PrintChar()
         {
