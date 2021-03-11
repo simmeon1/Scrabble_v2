@@ -1,17 +1,15 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 
 namespace ClassLibrary
 {
+    [DebuggerDisplay("{PrintChar()}")]
     public class BoardTile
     {
-        private int RowIndex { get; set; }
-        private int ColumnIndex { get; set; }
-        private CharTile CharTile { get; set; }
-        public BoardTile(int rowIndex, int columnIndex, CharTile charTile = null)
+        public CharTile CharTile { get; set; }
+        public BoardTile(CharTile charTile = null)
         {
-            RowIndex = rowIndex;
-            ColumnIndex = columnIndex;
             CharTile = charTile;
         }
 
@@ -19,11 +17,6 @@ namespace ClassLibrary
         {
             if (CharTile == null) return " ";
             return $"{CharTile.Letter}";
-        }
-
-        public void PlaceCharTile(CharTile c)
-        {
-            CharTile = c;
         }
     }
 }

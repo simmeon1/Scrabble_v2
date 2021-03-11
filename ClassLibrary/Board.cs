@@ -7,20 +7,42 @@ namespace ClassLibrary
     public class Board
     {
         private BoardTile[][] Tiles { get; set; }
+        public int NumberOfVerticalTiles { get; }
+        public int NumberOfHorizontalTiles { get; }
+
         public Board(int rowCount, int columnCount)
         {
+            if (rowCount < 1) throw new ArgumentException("The board must have at least one row.");
+            if (columnCount < 1) throw new ArgumentException("The board must have at least one column.");
+
             BoardTile[][] rowsAndColumns = new BoardTile[rowCount][];
             for (int i = 0; i < rowsAndColumns.Length; i++)
             {
                 rowsAndColumns[i] = new BoardTile[columnCount];
-                for (int j = 0; j < rowsAndColumns[i].Length; j++) rowsAndColumns[i][j] = new BoardTile(rowIndex: i, columnIndex: j);
+                for (int j = 0; j < rowsAndColumns[i].Length; j++) rowsAndColumns[i][j] = new BoardTile();
             }
             Tiles = rowsAndColumns;
+            NumberOfVerticalTiles = rowCount;
+            NumberOfHorizontalTiles = columnCount;
         }
 
-        public void PlaceCharTile(int rowIndex, int columnIndex, CharTile c)
+        public void SetCharTile(int rowPosition, int columnPosition, CharTile c)
         {
-            Tiles[rowIndex][columnIndex].PlaceCharTile(c);
+            ThrowArgumentExceptionIfProvidedRowAndColumnPositionsAreNotOnTheBoard(rowPosition, columnPosition);
+            BoardTile boardTile = GetBoardTileAtPosition(rowPosition, columnPosition);
+            boardTile.CharTile = c;
+        }
+
+        private BoardTile GetBoardTileAtPosition(int rowPosition, int columnPosition)
+        {
+            ThrowArgumentExceptionIfProvidedRowAndColumnPositionsAreNotOnTheBoard(rowPosition, columnPosition);
+            return Tiles[rowPosition - 1][columnPosition - 1];
+        }
+
+        private void ThrowArgumentExceptionIfProvidedRowAndColumnPositionsAreNotOnTheBoard(int rowPosition, int columnPosition)
+        {
+            if (rowPosition > NumberOfVerticalTiles) throw new ArgumentException("The specified row position is not available in the board.");
+            if (columnPosition > NumberOfHorizontalTiles) throw new ArgumentException("The specified column position is not available in the board.");
         }
 
         public string PrintBoard()
@@ -32,6 +54,22 @@ namespace ClassLibrary
                 foreach (BoardTile tile in rows) sb.Append($"[{tile.PrintChar()}]");
             }
             return sb.ToString();
+        }
+
+        public BoardTileCollection GetHorizontalBoardTilesThatMakeAWord(int rowPosition, int columnPosition)
+        {
+            ThrowArgumentExceptionIfProvidedRowAndColumnPositionsAreNotOnTheBoard(rowPosition, columnPosition);
+            List<BoardTile> boardTilesWithCharTiles = new List<BoardTile>();
+
+            int i = 0;
+            while (i <= NumberOfHorizontalTiles - columnPosition)
+            {
+                BoardTile boardTile = GetBoardTileAtPosition(rowPosition, columnPosition + i);
+                if (boardTile.CharTile == null) break;
+                boardTilesWithCharTiles.Add(boardTile);
+                i++;
+            }
+            return new BoardTileCollection(boardTilesWithCharTiles);
         }
     }
 }
