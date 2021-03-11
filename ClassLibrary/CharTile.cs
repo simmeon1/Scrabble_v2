@@ -6,7 +6,19 @@ namespace ClassLibrary
 {
     public class CharTile
     {
-        public char Letter { get; private set; }
+        private char letter;
+
+        public char Letter
+        {
+            get
+            {
+                return letter;
+            }
+            set
+            {
+                letter = value.ToUpper();
+            }
+        }
         private int Score { get; set; }
         public CharTile(char letter, int score)
         {

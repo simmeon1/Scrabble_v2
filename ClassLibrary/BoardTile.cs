@@ -5,8 +5,8 @@ namespace ClassLibrary
 {
     public class BoardTile
     {
-        public int RowIndex { get; }
-        public int ColumnIndex { get; }
+        private int RowIndex { get; set; }
+        private int ColumnIndex { get; set; }
         private CharTile CharTile { get; set; }
         public BoardTile(int rowIndex, int columnIndex, CharTile charTile = null)
         {
