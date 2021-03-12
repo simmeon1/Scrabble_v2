@@ -14,11 +14,11 @@ namespace UnitTests
         {
             Board board = new Board(rowCount: 7, columnCount: 10);
 
-            board.SetCharTile(rowPosition: 1, columnPosition: 2, c: new CharTile('H', 10));
-            board.SetCharTile(rowPosition: 2, columnPosition: 2, c: new CharTile('E', 10));
-            board.SetCharTile(rowPosition: 3, columnPosition: 2, c: new CharTile('L', 10));
-            board.SetCharTile(rowPosition: 4, columnPosition: 2, c: new CharTile('L', 10));
-            board.SetCharTile(rowPosition: 5, columnPosition: 2, c: new CharTile('O', 10));
+            board.SetCharTile(X: 1, Y: 2, c: new CharTile('H', 10));
+            board.SetCharTile(X: 2, Y: 2, c: new CharTile('E', 10));
+            board.SetCharTile(X: 3, Y: 2, c: new CharTile('L', 10));
+            board.SetCharTile(X: 4, Y: 2, c: new CharTile('L', 10));
+            board.SetCharTile(X: 5, Y: 2, c: new CharTile('O', 10));
 
             string result = board.PrintBoard();
             Debug.WriteLine(result);
@@ -60,30 +60,30 @@ namespace UnitTests
         public void ReadHorizontalWordTest()
         {
             Board board = new Board(rowCount: 7, columnCount: 7);
-            board.SetCharTile(rowPosition: 1, columnPosition: 2, c: new CharTile('H', 10));
-            board.SetCharTile(rowPosition: 1, columnPosition: 3, c: new CharTile('E', 10));
-            board.SetCharTile(rowPosition: 1, columnPosition: 4, c: new CharTile('L', 10));
-            board.SetCharTile(rowPosition: 1, columnPosition: 5, c: new CharTile('L', 10));
-            board.SetCharTile(rowPosition: 1, columnPosition: 6, c: new CharTile('O', 10));
+            board.SetCharTile(X: 1, Y: 2, c: new CharTile('H', 10));
+            board.SetCharTile(X: 1, Y: 3, c: new CharTile('E', 10));
+            board.SetCharTile(X: 1, Y: 4, c: new CharTile('L', 10));
+            board.SetCharTile(X: 1, Y: 5, c: new CharTile('L', 10));
+            board.SetCharTile(X: 1, Y: 6, c: new CharTile('O', 10));
 
-            board.SetCharTile(rowPosition: 2, columnPosition: 2, c: new CharTile('F', 10));
-            board.SetCharTile(rowPosition: 2, columnPosition: 3, c: new CharTile('R', 10));
-            board.SetCharTile(rowPosition: 2, columnPosition: 4, c: new CharTile('I', 10));
-            board.SetCharTile(rowPosition: 2, columnPosition: 5, c: new CharTile('E', 10));
-            board.SetCharTile(rowPosition: 2, columnPosition: 6, c: new CharTile('N', 10));
-            board.SetCharTile(rowPosition: 2, columnPosition: 7, c: new CharTile('D', 10));
+            board.SetCharTile(X: 2, Y: 2, c: new CharTile('F', 10));
+            board.SetCharTile(X: 2, Y: 3, c: new CharTile('R', 10));
+            board.SetCharTile(X: 2, Y: 4, c: new CharTile('I', 10));
+            board.SetCharTile(X: 2, Y: 5, c: new CharTile('E', 10));
+            board.SetCharTile(X: 2, Y: 6, c: new CharTile('N', 10));
+            board.SetCharTile(X: 2, Y: 7, c: new CharTile('D', 10));
 
-            board.SetCharTile(rowPosition: 3, columnPosition: 1, c: new CharTile('B', 10));
-            board.SetCharTile(rowPosition: 3, columnPosition: 2, c: new CharTile('Y', 10));
-            board.SetCharTile(rowPosition: 3, columnPosition: 3, c: new CharTile('E', 10));
-            board.SetCharTile(rowPosition: 3, columnPosition: 4, c: new CharTile('B', 10));
-            board.SetCharTile(rowPosition: 3, columnPosition: 5, c: new CharTile('Y', 10));
-            board.SetCharTile(rowPosition: 3, columnPosition: 6, c: new CharTile('E', 10));
+            board.SetCharTile(X: 3, Y: 1, c: new CharTile('B', 10));
+            board.SetCharTile(X: 3, Y: 2, c: new CharTile('Y', 10));
+            board.SetCharTile(X: 3, Y: 3, c: new CharTile('E', 10));
+            board.SetCharTile(X: 3, Y: 4, c: new CharTile('B', 10));
+            board.SetCharTile(X: 3, Y: 5, c: new CharTile('Y', 10));
+            board.SetCharTile(X: 3, Y: 6, c: new CharTile('E', 10));
 
-            board.SetCharTile(rowPosition: 4, columnPosition: 4, c: new CharTile('M', 10));
-            board.SetCharTile(rowPosition: 4, columnPosition: 5, c: new CharTile('A', 10));
-            board.SetCharTile(rowPosition: 4, columnPosition: 6, c: new CharTile('T', 10));
-            board.SetCharTile(rowPosition: 4, columnPosition: 7, c: new CharTile('E', 10));
+            board.SetCharTile(X: 4, Y: 4, c: new CharTile('M', 10));
+            board.SetCharTile(X: 4, Y: 5, c: new CharTile('A', 10));
+            board.SetCharTile(X: 4, Y: 6, c: new CharTile('T', 10));
+            board.SetCharTile(X: 4, Y: 7, c: new CharTile('E', 10));
 
             Debug.WriteLine(board.PrintBoard());
 
@@ -104,30 +104,30 @@ namespace UnitTests
         public void ReadVerticalWordTest()
         {
             Board board = new Board(rowCount: 7, columnCount: 7);
-            board.SetCharTile(rowPosition: 2, columnPosition: 1, c: new CharTile('H', 10));
-            board.SetCharTile(rowPosition: 3, columnPosition: 1, c: new CharTile('E', 10));
-            board.SetCharTile(rowPosition: 4, columnPosition: 1, c: new CharTile('L', 10));
-            board.SetCharTile(rowPosition: 5, columnPosition: 1, c: new CharTile('L', 10));
-            board.SetCharTile(rowPosition: 6, columnPosition: 1, c: new CharTile('O', 10));
+            board.SetCharTile(X: 2, Y: 1, c: new CharTile('H', 10));
+            board.SetCharTile(X: 3, Y: 1, c: new CharTile('E', 10));
+            board.SetCharTile(X: 4, Y: 1, c: new CharTile('L', 10));
+            board.SetCharTile(X: 5, Y: 1, c: new CharTile('L', 10));
+            board.SetCharTile(X: 6, Y: 1, c: new CharTile('O', 10));
                               
-            board.SetCharTile(rowPosition: 2, columnPosition: 2, c: new CharTile('F', 10));
-            board.SetCharTile(rowPosition: 3, columnPosition: 2, c: new CharTile('R', 10));
-            board.SetCharTile(rowPosition: 4, columnPosition: 2, c: new CharTile('I', 10));
-            board.SetCharTile(rowPosition: 5, columnPosition: 2, c: new CharTile('E', 10));
-            board.SetCharTile(rowPosition: 6, columnPosition: 2, c: new CharTile('N', 10));
-            board.SetCharTile(rowPosition: 7, columnPosition: 2, c: new CharTile('D', 10));
+            board.SetCharTile(X: 2, Y: 2, c: new CharTile('F', 10));
+            board.SetCharTile(X: 3, Y: 2, c: new CharTile('R', 10));
+            board.SetCharTile(X: 4, Y: 2, c: new CharTile('I', 10));
+            board.SetCharTile(X: 5, Y: 2, c: new CharTile('E', 10));
+            board.SetCharTile(X: 6, Y: 2, c: new CharTile('N', 10));
+            board.SetCharTile(X: 7, Y: 2, c: new CharTile('D', 10));
 
-            board.SetCharTile(rowPosition: 1, columnPosition: 3, c: new CharTile('B', 10));
-            board.SetCharTile(rowPosition: 2, columnPosition: 3, c: new CharTile('Y', 10));
-            board.SetCharTile(rowPosition: 3, columnPosition: 3, c: new CharTile('E', 10));
-            board.SetCharTile(rowPosition: 4, columnPosition: 3, c: new CharTile('B', 10));
-            board.SetCharTile(rowPosition: 5, columnPosition: 3, c: new CharTile('Y', 10));
-            board.SetCharTile(rowPosition: 6, columnPosition: 3, c: new CharTile('E', 10));
+            board.SetCharTile(X: 1, Y: 3, c: new CharTile('B', 10));
+            board.SetCharTile(X: 2, Y: 3, c: new CharTile('Y', 10));
+            board.SetCharTile(X: 3, Y: 3, c: new CharTile('E', 10));
+            board.SetCharTile(X: 4, Y: 3, c: new CharTile('B', 10));
+            board.SetCharTile(X: 5, Y: 3, c: new CharTile('Y', 10));
+            board.SetCharTile(X: 6, Y: 3, c: new CharTile('E', 10));
                               
-            board.SetCharTile(rowPosition: 4, columnPosition: 4, c: new CharTile('M', 10));
-            board.SetCharTile(rowPosition: 5, columnPosition: 4, c: new CharTile('A', 10));
-            board.SetCharTile(rowPosition: 6, columnPosition: 4, c: new CharTile('T', 10));
-            board.SetCharTile(rowPosition: 7, columnPosition: 4, c: new CharTile('E', 10));
+            board.SetCharTile(X: 4, Y: 4, c: new CharTile('M', 10));
+            board.SetCharTile(X: 5, Y: 4, c: new CharTile('A', 10));
+            board.SetCharTile(X: 6, Y: 4, c: new CharTile('T', 10));
+            board.SetCharTile(X: 7, Y: 4, c: new CharTile('E', 10));
 
             Debug.WriteLine(board.PrintBoard());
 

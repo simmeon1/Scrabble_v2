@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace ClassLibrary
 {
-    public class BoardTileCollection : IList<BoardTile>
+    public class BoardWord : IList<BoardTile>
     {
-        public BoardTileCollection(List<BoardTile> boardTiles)
+        private List<BoardTile> BoardTiles { get; set; }
+        public BoardWord(List<BoardTile> boardTiles)
         {
             BoardTiles = boardTiles ?? new List<BoardTile>();
         }
@@ -19,8 +20,6 @@ namespace ClassLibrary
         public int Count => ((ICollection<BoardTile>)BoardTiles).Count;
 
         public bool IsReadOnly => ((ICollection<BoardTile>)BoardTiles).IsReadOnly;
-
-        private List<BoardTile> BoardTiles { get; set; }
 
         public void Add(BoardTile item)
         {
