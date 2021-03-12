@@ -20,7 +20,7 @@ namespace ClassLibrary
             for (int i = 0; i < rowsAndColumns.Length; i++)
             {
                 rowsAndColumns[i] = new BoardTile[columnCount];
-                for (int j = 0; j < rowsAndColumns[i].Length; j++) rowsAndColumns[i][j] = new BoardTile();
+                for (int j = 0; j < rowsAndColumns[i].Length; j++) rowsAndColumns[i][j] = new BoardTile(X: i + 1, Y: j + 1);
             }
             Tiles = rowsAndColumns;
             NumberOfVerticalTiles = rowCount;
@@ -34,7 +34,7 @@ namespace ClassLibrary
             boardTile.CharTile = c;
         }
 
-        private BoardTile GetBoardTileAtCoordinates(int X, int Y)
+        public BoardTile GetBoardTileAtCoordinates(int X, int Y)
         {
             ThrowArgumentExceptionIfProvidedXandYDoNotExist(X, Y);
             return Tiles[X - 1][Y - 1];

@@ -28,6 +28,18 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Test_CreateBoard()
+        {
+            Board board = new Board(rowCount: 2, columnCount: 2);
+
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 1).X == 1);
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 1).Y == 1);
+
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 2).X == 2);
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 2).Y == 2);
+        }
+
+        [TestMethod]
         public void BoardCreationArgumentException()
         {
             Board board;
@@ -95,7 +107,7 @@ namespace UnitTests
 
             string word3 = board.GetHorizontalWordTilesAtCoordinates(3, 1).GetWord();
             Assert.IsTrue(word3.Equals("BYEBYE"));
-            
+
             string word4 = board.GetHorizontalWordTilesAtCoordinates(4, 7).GetWord();
             Assert.IsTrue(word4.Equals("MATE"));
         }
@@ -109,7 +121,7 @@ namespace UnitTests
             board.SetCharTile(X: 4, Y: 1, c: new CharTile('L', 10));
             board.SetCharTile(X: 5, Y: 1, c: new CharTile('L', 10));
             board.SetCharTile(X: 6, Y: 1, c: new CharTile('O', 10));
-                              
+
             board.SetCharTile(X: 2, Y: 2, c: new CharTile('F', 10));
             board.SetCharTile(X: 3, Y: 2, c: new CharTile('R', 10));
             board.SetCharTile(X: 4, Y: 2, c: new CharTile('I', 10));
@@ -123,7 +135,7 @@ namespace UnitTests
             board.SetCharTile(X: 4, Y: 3, c: new CharTile('B', 10));
             board.SetCharTile(X: 5, Y: 3, c: new CharTile('Y', 10));
             board.SetCharTile(X: 6, Y: 3, c: new CharTile('E', 10));
-                              
+
             board.SetCharTile(X: 4, Y: 4, c: new CharTile('M', 10));
             board.SetCharTile(X: 5, Y: 4, c: new CharTile('A', 10));
             board.SetCharTile(X: 6, Y: 4, c: new CharTile('T', 10));
