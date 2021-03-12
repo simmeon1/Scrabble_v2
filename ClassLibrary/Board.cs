@@ -57,7 +57,7 @@ namespace ClassLibrary
             return sb.ToString();
         }
 
-        public BoardTileCollection GetHorizontalWordAtCoordinates(int rowPosition, int columnPosition)
+        public BoardTileCollection GetHorizontalWordTilesAtCoordinates(int rowPosition, int columnPosition)
         {
             ThrowArgumentExceptionIfProvidedRowAndColumnPositionsAreNotOnTheBoard(rowPosition, columnPosition);
             List<BoardTile> boardTilesWithCharTiles = new List<BoardTile>();
@@ -77,6 +77,33 @@ namespace ClassLibrary
             while (i <= NumberOfHorizontalTiles - columnPosition)
             {
                 BoardTile boardTile = GetBoardTileAtPosition(rowPosition, columnPosition + i);
+                if (boardTile.CharTile == null) break;
+                boardTilesWithCharTiles.Add(boardTile);
+                i++;
+            }
+            return new BoardTileCollection(boardTilesWithCharTiles);
+        }
+
+        public BoardTileCollection GetVerticalWordTilesAtCoordinates(int rowPosition, int columnPosition)
+        {
+            ThrowArgumentExceptionIfProvidedRowAndColumnPositionsAreNotOnTheBoard(rowPosition, columnPosition);
+            List<BoardTile> boardTilesWithCharTiles = new List<BoardTile>();
+
+            if (GetBoardTileAtPosition(rowPosition, columnPosition).CharTile == null) return new BoardTileCollection(boardTilesWithCharTiles);
+
+            int i = rowPosition;
+            while (i > 1)
+            {
+                BoardTile boardTile = GetBoardTileAtPosition(i - 1, columnPosition);
+                if (boardTile.CharTile == null) break;
+                boardTilesWithCharTiles = boardTilesWithCharTiles.Prepend(boardTile).ToList();
+                i--;
+            }
+
+            i = 0;
+            while (i <= NumberOfVerticalTiles - rowPosition)
+            {
+                BoardTile boardTile = GetBoardTileAtPosition(rowPosition + i, columnPosition);
                 if (boardTile.CharTile == null) break;
                 boardTilesWithCharTiles.Add(boardTile);
                 i++;
