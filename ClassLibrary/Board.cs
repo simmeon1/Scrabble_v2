@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace ClassLibrary
 {
@@ -56,12 +57,23 @@ namespace ClassLibrary
             return sb.ToString();
         }
 
-        public BoardTileCollection GetHorizontalBoardTilesThatMakeAWord(int rowPosition, int columnPosition)
+        public BoardTileCollection GetHorizontalWordAtCoordinates(int rowPosition, int columnPosition)
         {
             ThrowArgumentExceptionIfProvidedRowAndColumnPositionsAreNotOnTheBoard(rowPosition, columnPosition);
             List<BoardTile> boardTilesWithCharTiles = new List<BoardTile>();
 
-            int i = 0;
+            if (GetBoardTileAtPosition(rowPosition, columnPosition).CharTile == null) return new BoardTileCollection(boardTilesWithCharTiles);
+
+            int i = columnPosition;
+            while (i > 1)
+            {
+                BoardTile boardTile = GetBoardTileAtPosition(rowPosition, i - 1);
+                if (boardTile.CharTile == null) break;
+                boardTilesWithCharTiles = boardTilesWithCharTiles.Prepend(boardTile).ToList();
+                i--;
+            }
+
+            i = 0;
             while (i <= NumberOfHorizontalTiles - columnPosition)
             {
                 BoardTile boardTile = GetBoardTileAtPosition(rowPosition, columnPosition + i);

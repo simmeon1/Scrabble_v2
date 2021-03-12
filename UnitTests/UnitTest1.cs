@@ -60,26 +60,44 @@ namespace UnitTests
         public void ReadHorizontalWordTest()
         {
             Board board = new Board(rowCount: 7, columnCount: 7);
-            board.SetCharTile(rowPosition: 1, columnPosition: 3, c: new CharTile('H', 10));
-            board.SetCharTile(rowPosition: 1, columnPosition: 4, c: new CharTile('E', 10));
+            board.SetCharTile(rowPosition: 1, columnPosition: 2, c: new CharTile('H', 10));
+            board.SetCharTile(rowPosition: 1, columnPosition: 3, c: new CharTile('E', 10));
+            board.SetCharTile(rowPosition: 1, columnPosition: 4, c: new CharTile('L', 10));
             board.SetCharTile(rowPosition: 1, columnPosition: 5, c: new CharTile('L', 10));
-            board.SetCharTile(rowPosition: 1, columnPosition: 6, c: new CharTile('L', 10));
-            board.SetCharTile(rowPosition: 1, columnPosition: 7, c: new CharTile('O', 10));
+            board.SetCharTile(rowPosition: 1, columnPosition: 6, c: new CharTile('O', 10));
 
-            board.SetCharTile(rowPosition: 2, columnPosition: 1, c: new CharTile('B', 10));
-            board.SetCharTile(rowPosition: 2, columnPosition: 2, c: new CharTile('Y', 10));
-            board.SetCharTile(rowPosition: 2, columnPosition: 3, c: new CharTile('E', 10));
+            board.SetCharTile(rowPosition: 2, columnPosition: 2, c: new CharTile('F', 10));
+            board.SetCharTile(rowPosition: 2, columnPosition: 3, c: new CharTile('R', 10));
+            board.SetCharTile(rowPosition: 2, columnPosition: 4, c: new CharTile('I', 10));
+            board.SetCharTile(rowPosition: 2, columnPosition: 5, c: new CharTile('E', 10));
+            board.SetCharTile(rowPosition: 2, columnPosition: 6, c: new CharTile('N', 10));
+            board.SetCharTile(rowPosition: 2, columnPosition: 7, c: new CharTile('D', 10));
+
+            board.SetCharTile(rowPosition: 3, columnPosition: 1, c: new CharTile('B', 10));
+            board.SetCharTile(rowPosition: 3, columnPosition: 2, c: new CharTile('Y', 10));
+            board.SetCharTile(rowPosition: 3, columnPosition: 3, c: new CharTile('E', 10));
+            board.SetCharTile(rowPosition: 3, columnPosition: 4, c: new CharTile('B', 10));
+            board.SetCharTile(rowPosition: 3, columnPosition: 5, c: new CharTile('Y', 10));
+            board.SetCharTile(rowPosition: 3, columnPosition: 6, c: new CharTile('E', 10));
+
+            board.SetCharTile(rowPosition: 4, columnPosition: 4, c: new CharTile('M', 10));
+            board.SetCharTile(rowPosition: 4, columnPosition: 5, c: new CharTile('A', 10));
+            board.SetCharTile(rowPosition: 4, columnPosition: 6, c: new CharTile('T', 10));
+            board.SetCharTile(rowPosition: 4, columnPosition: 7, c: new CharTile('E', 10));
 
             Debug.WriteLine(board.PrintBoard());
 
-            string word1 = board.GetHorizontalBoardTilesThatMakeAWord(1, 3).GetWord();
+            string word1 = board.GetHorizontalWordAtCoordinates(1, 3).GetWord();
             Assert.IsTrue(word1.Equals("HELLO"));
+
+            string word2 = board.GetHorizontalWordAtCoordinates(2, 5).GetWord();
+            Assert.IsTrue(word2.Equals("FRIEND"));
+
+            string word3 = board.GetHorizontalWordAtCoordinates(3, 1).GetWord();
+            Assert.IsTrue(word3.Equals("BYEBYE"));
             
-            string word2 = board.GetHorizontalBoardTilesThatMakeAWord(2, 1).GetWord();
-            Assert.IsTrue(word2.Equals("BYE"));
-            
-            string word3 = board.GetHorizontalBoardTilesThatMakeAWord(2, 2).GetWord();
-            Assert.IsTrue(word3.Equals("YE"));
+            string word4 = board.GetHorizontalWordAtCoordinates(4, 7).GetWord();
+            Assert.IsTrue(word4.Equals("MATE"));
         }
     }
 }
