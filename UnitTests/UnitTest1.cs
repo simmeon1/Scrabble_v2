@@ -23,8 +23,8 @@ namespace UnitTests
             string result = board.PrintBoard();
             Debug.WriteLine(result);
 
-            Assert.IsTrue(board.NumberOfVerticalTiles == 7);
-            Assert.IsTrue(board.NumberOfHorizontalTiles == 10);
+            Assert.IsTrue(board.RowCount == 7);
+            Assert.IsTrue(board.ColumnCount == 10);
         }
 
         [TestMethod]

@@ -17,10 +17,10 @@ namespace ClassLibrary
             this.Y = Y;
         }
 
-        public string PrintChar()
+        public char PrintChar()
         {
-            if (CharTile == null) return " ";
-            return $"{CharTile.Letter}";
+            if (CharTile == null) return ' ';
+            return CharTile.Letter;
         }
     }
 }
