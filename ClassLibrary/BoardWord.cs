@@ -1,16 +1,45 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Linq;
 
 namespace ClassLibrary
 {
-    public class BoardWord : BoardTileCollection
+    public abstract class BoardWord : BoardTileCollection
     {
-        public BoardWord(List<BoardTile> boardTiles = null) : base(boardTiles)
+        protected abstract int GetCoordinateThatIsConsistentInTheWord(BoardTile boardTile);
+        protected abstract int GetCoordinateThatIsIncrementalInTheWord(BoardTile boardTile);
+        protected abstract string ErrorMessageIfTilesAreNotConnected { get; }
+        protected BoardWord(List<BoardTile> boardTiles = null) : base(boardTiles)
         {
+            if (BoardTiles.Count < 2) throw new Exception(ExceptionMessages.ABoardWordMustConsistOf2OrMoreLetters);
+            if (!BoardTilesAreConnected()) throw new Exception($"{ErrorMessageIfTilesAreNotConnected}");
+        }
+
+        private bool BoardTilesAreConnected()
+        {
+
+            HashSet<int> consistentCoordinatesFound = new HashSet<int>();
+            List<int> incrementalCoordinatesFound = new List<int>();
+
+            List<BoardTile> orderedBoardTiles = BoardTiles.OrderBy(bt => GetCoordinateThatIsConsistentInTheWord(bt)).ThenBy(bt => GetCoordinateThatIsIncrementalInTheWord(bt)).ToList();
+            foreach (BoardTile bt in orderedBoardTiles)
+            {
+                consistentCoordinatesFound.Add(GetCoordinateThatIsConsistentInTheWord(bt));
+                incrementalCoordinatesFound.Add(GetCoordinateThatIsIncrementalInTheWord(bt));
+            }
+
+            if (consistentCoordinatesFound.Count != 1) return false;
+
+            incrementalCoordinatesFound = incrementalCoordinatesFound.OrderBy(c => c).ToList();
+
+            int lastCoordinate = 0;
+            foreach (int coordinate in incrementalCoordinatesFound)
+            {
+                if (lastCoordinate > 0 && coordinate - lastCoordinate != 1) return false;
+                lastCoordinate = coordinate;
+            }
+            return true;
         }
 
         public string GetWord()

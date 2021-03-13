@@ -8,10 +8,10 @@ namespace ClassLibrary
     {
         public char Letter { get; set; }
         private int Score { get; set; }
-        public CharTile(char letter, int score)
+        public CharTile(char letter, int score = 1)
         {
-            if (letter < 65 || letter > 90) throw new ArgumentException("The letter can only be between A and Z.");
-            if (score < 1) throw new ArgumentException("The score must be greater than 0.");
+            if (letter < 65 || letter > 90) throw new Exception(ExceptionMessages.LetterCanOnlyBeBetweenAAndZ);
+            if (score < 1) throw new Exception(ExceptionMessages.ScoreMustBeGreaterThan0);
             Letter = letter;
             Score = score;
         }
