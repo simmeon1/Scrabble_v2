@@ -11,6 +11,7 @@ namespace ClassLibrary
         private BoardTile[][] Tiles { get; set; }
         public int RowCount { get; set; }
         public int ColumnCount { get; set; }
+        private bool Transposed { get; set; }
 
         public Board(int rowCount, int columnCount)
         {
@@ -53,14 +54,14 @@ namespace ClassLibrary
 
         public string PrintBoard()
         {
-            BoardTileCollection anchors = GetAnchors();
+            HashSet<string> anchorIds = GetAnchors().Select(a => a.Guid).ToHashSet();
 
             const string delimiter = "-------------------------------";
             StringBuilder sb = new StringBuilder(delimiter);
             foreach (BoardTile[] rows in Tiles)
             {
                 if (sb.Length != 0) sb.Append('\n');
-                foreach (BoardTile tile in rows) sb.Append(anchors.Contains(tile) ? "[=]" : $"[{tile.PrintChar()}]");
+                foreach (BoardTile tile in rows) sb.Append(anchorIds.Contains(tile.Guid) ? "[=]" : $"[{tile.PrintChar()}]");
             }
             sb.Append('\n');
             sb.Append(delimiter);
@@ -109,10 +110,12 @@ namespace ClassLibrary
                     boardTile.Y = temp;
                 }
             }
-            Tiles = newBoard;
+
             int temp2 = RowCount;
             RowCount = ColumnCount;
             ColumnCount = temp2;
+            Tiles = newBoard;
+            Transposed = !Transposed;
         }
 
         public VerticalBoardWord GetVerticalWordTilesAtCoordinates(int X, int Y)
@@ -142,22 +145,22 @@ namespace ClassLibrary
             return new VerticalBoardWord(boardTilesWithCharTiles);
         }
 
-        public BoardTileCollection GetAnchors()
+        public AnchorTileCollection GetAnchors()
         {
             return new AnchorCollector().GetAnchors(this);
         }
 
         private class AnchorCollector
         {
-            private List<BoardTile> Anchors { get; set; }
-            private HashSet<BoardTile> AddedAnchors { get; set; }
+            private List<AnchorTile> Anchors { get; set; }
+            private HashSet<string> AddedAnchors { get; set; }
             private Board Board { get; set; }
 
-            public BoardTileCollection GetAnchors(Board board)
+            public AnchorTileCollection GetAnchors(Board board)
             {
                 Board = board;
-                Anchors = new List<BoardTile>();
-                AddedAnchors = new HashSet<BoardTile>();
+                Anchors = new List<AnchorTile>();
+                AddedAnchors = new HashSet<string>();
 
                 for (int X = 1; X <= Board.RowCount; X++)
                 {
@@ -170,15 +173,17 @@ namespace ClassLibrary
                         AnalyseBoardTileAtCoordinatesAndAddIfItIsAnAnchor(X, Y + 1);
                     }
                 }
-                return new BoardTileCollection(Anchors.ToList());
+                return new AnchorTileCollection(Anchors);
             }
 
             private void AnalyseBoardTileAtCoordinatesAndAddIfItIsAnAnchor(int X, int Y)
             {
-                BoardTile tile = Board.GetBoardTileAtCoordinates(X, Y);
-                if (tile == null || tile.CharTile != null || AddedAnchors.Contains(tile)) return;
-                Anchors.Add(tile);
-                AddedAnchors.Add(tile);
+                BoardTile boardTile = Board.GetBoardTileAtCoordinates(X, Y);
+                if (boardTile == null || boardTile.CharTile != null) return;
+                AnchorTile anchorTile = new(boardTile);
+                if (AddedAnchors.Contains(anchorTile.Guid)) return;
+                Anchors.Add(anchorTile);
+                AddedAnchors.Add(anchorTile.Guid);
             }
         }
     }
