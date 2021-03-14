@@ -4,7 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace ClassLibrary
 {
-    [DebuggerDisplay("{PrintChar()}")]
+    [DebuggerDisplay("{PrintChar()}, X={X}, Y={Y}")]
     public class BoardTile
     {
         public CharTile CharTile { get; set; }

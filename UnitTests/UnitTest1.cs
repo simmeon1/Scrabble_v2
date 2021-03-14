@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace UnitTests
 {
@@ -29,9 +30,21 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void Test_CreateBoard()
+        public void GetBoardTileAtCoordinatesTests()
         {
-            Board board = new Board(rowCount: 2, columnCount: 2);
+            Board board = new(rowCount: 2, columnCount: 2);
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 1) != null);
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 2) != null);
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(0, 1) == null);
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 0) == null);
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(0, 0) == null);
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(-1, -1) == null);
+        }
+
+        [TestMethod]
+        public void Test_CreateBoard_BoardTilesXsAndYs()
+        {
+            Board board = new(rowCount: 2, columnCount: 2);
 
             Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 1).X == 1);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 1).Y == 1);
@@ -50,14 +63,13 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void CharPlaceException()
+        public void SetCharTileTest()
         {
-            Board board = new Board(1, 10);
-            CharTile c = new CharTile('A');
-            board.SetCharTile(1, 10, c);
-
-            AssertThatCorrectExceptionIsThrown(() => board.SetCharTile(2, 5, c), ExceptionMessages.SpecifiedRowPositionIsNotAvailableInTheBoard);
-            AssertThatCorrectExceptionIsThrown(() => board.SetCharTile(1, 11, c), ExceptionMessages.SpecifiedColumnPositionIsNotAvailableInTheBoard);
+            Board board = new(1, 10);
+            CharTile c = new('A');
+            Assert.IsTrue(board.SetCharTile(1, 11, c) == null);
+            Assert.IsTrue(board.SetCharTile(1, 10, c).Equals(c));
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 10).CharTile.Equals(c));
         }
 
         private static void AssertThatCorrectExceptionIsThrown(Action action, string message)
@@ -108,6 +120,9 @@ namespace UnitTests
 
             Debug.WriteLine(board.PrintBoard());
 
+            HorizontalBoardWord word0 = board.GetHorizontalWordTilesAtCoordinates(-1, -1);
+            Assert.IsTrue(word0 == null);
+
             string word1 = board.GetHorizontalWordTilesAtCoordinates(1, 3).GetWord();
             Assert.IsTrue(word1.Equals("HELLO"));
 
@@ -152,6 +167,9 @@ namespace UnitTests
 
             Debug.WriteLine(board.PrintBoard());
 
+            VerticalBoardWord word0 = board.GetVerticalWordTilesAtCoordinates(-1, -1);
+            Assert.IsTrue(word0 == null);
+
             string word1 = board.GetVerticalWordTilesAtCoordinates(3, 1).GetWord();
             Assert.IsTrue(word1.Equals("HELLO"));
 
@@ -175,7 +193,7 @@ namespace UnitTests
             BoardTile char2 = new(1, 3, new CharTile('B'));
             BoardTile char3 = new(1, 4, new CharTile('C'));
             List<BoardTile> charList = new() { char1, char2, char3 };
-           
+
             horizontalWord = new HorizontalBoardWord(charList);
 
             char1.X = 2;
@@ -184,7 +202,7 @@ namespace UnitTests
             char1.X = 1;
             char1.Y = 1;
             AssertThatCorrectExceptionIsThrown(() => horizontalWord = new HorizontalBoardWord(charList), ExceptionMessages.BoardTilesAreNotHorizontallyConnected);
-            
+
             char1.Y = 2;
             char3.Y = 5;
             AssertThatCorrectExceptionIsThrown(() => horizontalWord = new HorizontalBoardWord(charList), ExceptionMessages.BoardTilesAreNotHorizontallyConnected);
@@ -213,6 +231,44 @@ namespace UnitTests
             char1.X = 2;
             char3.X = 5;
             AssertThatCorrectExceptionIsThrown(() => VerticalWord = new VerticalBoardWord(charList), ExceptionMessages.BoardTilesAreNotVerticallyConnected);
+        }
+
+        [TestMethod]
+        public void TestGetAnchors()
+        {
+            Board board = new(rowCount: 5, columnCount: 5);
+            Assert.IsTrue(board.GetAnchors().Count() == 0);
+
+            board.SetCharTile(1, 1, 'H');
+            Assert.IsTrue(board.GetAnchors().Count() == 2);
+            board.SetCharTile(1, 1, null);
+
+            board.SetCharTile(1, 2, 'H');
+            Assert.IsTrue(board.GetAnchors().Count() == 3);
+            board.SetCharTile(1, 2, null);
+
+            board.SetCharTile(2, 2, 'H');
+            Assert.IsTrue(board.GetAnchors().Count() == 4);
+
+            board.SetCharTile(2, 3, 'E');
+            Assert.IsTrue(board.GetAnchors().Count() == 6);
+
+            board.SetCharTile(3, 3, 'E');
+            Assert.IsTrue(board.GetAnchors().Count() == 7);
+
+            board.SetCharTile(1, 3, 'O');
+            Assert.IsTrue(board.GetAnchors().Count() == 7);
+
+            board.SetCharTile(4, 3, 'O');
+            Assert.IsTrue(board.GetAnchors().Count() == 9);
+
+            board.SetCharTile(4, 2, 'Y');
+            Assert.IsTrue(board.GetAnchors().Count() == 10);
+
+            board.SetCharTile(4, 1, 'D');
+            Assert.IsTrue(board.GetAnchors().Count() == 11);
+
+            Debug.WriteLine(board.PrintBoard());
         }
     }
 }
