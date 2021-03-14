@@ -374,12 +374,12 @@ namespace UnitTests
             Assert.IsTrue(board.RowCount == 2);
             Assert.IsTrue(board.ColumnCount == 3);
             BoardTile boardTile = board.GetBoardTileAtCoordinates(1, 2);
-            string guid = boardTile.Guid;
+            Guid guid = boardTile.Guid;
             Assert.IsTrue(boardTile.CharTile.Letter == 'B');
             Assert.IsTrue(boardTile.X == 1);
             Assert.IsTrue(boardTile.Y == 2);
             Debug.WriteLine(board.PrintBoard());
-
+            
             board.Transpose();
             Assert.IsTrue(board.RowCount == 3);
             Assert.IsTrue(board.ColumnCount == 2);
@@ -399,19 +399,6 @@ namespace UnitTests
             Assert.IsTrue(boardTile.Y == 2);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 2).Guid.Equals(guid));
             Debug.WriteLine(board.PrintBoard());
-        }
-
-        [TestMethod]
-        public void Test_AnchorTile()
-        {
-            Board board = new(1, 1);
-            board.SetCharTile(1, 1, 'A');
-            BoardTile boardTile = board.GetBoardTileAtCoordinates(1, 1);
-            AnchorTile anchorTile = new(boardTile);
-            Assert.IsTrue(boardTile.X == anchorTile.X);
-            Assert.IsTrue(boardTile.Y == anchorTile.Y);
-            Assert.IsTrue(boardTile.Guid.Equals(anchorTile.Guid));
-            Assert.IsTrue(boardTile.CharTile.Equals(anchorTile.CharTile));
         }
     }
 }
