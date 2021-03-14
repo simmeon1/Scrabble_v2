@@ -297,5 +297,108 @@ namespace UnitTests
             Dawg<bool> boingDawg = Globals.BoingDawg;
             Assert.IsTrue(boingDawg.Count() == 64);
         }
+
+        [TestMethod]
+        public void TestTransposition_1()
+        {
+            const int rowCount = 2;
+            const int columnCount = 5;
+            int[][] board = new int[rowCount][];
+            board[0] = new int[columnCount];
+            board[1] = new int[columnCount];
+
+            board[0][0] = 0;
+            board[0][1] = 1;
+            board[0][2] = 2;
+            board[0][3] = 3;
+            board[0][4] = 4;
+            board[1][0] = 5;
+            board[1][1] = 6;
+            board[1][2] = 7;
+            board[1][3] = 8;
+            board[1][4] = 9;
+
+            int[][] newBoard = new int[columnCount][];
+            for (int y = 0; y < columnCount; y++)
+            {
+                newBoard[y] = new int[rowCount];
+                for (int x = 0; x < rowCount; x++)
+                {
+                    newBoard[y][x] = board[x][y];
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestTransposition_2()
+        {
+            const int rowCount = 3;
+            const int columnCount = 3;
+            int[][] board = new int[rowCount][];
+            board[0] = new int[columnCount];
+            board[1] = new int[columnCount];
+            board[2] = new int[columnCount];
+
+            board[0][0] = 1;
+            board[0][1] = 2;
+            board[0][2] = 3;
+            board[1][0] = 4;
+            board[1][1] = 5;
+            board[1][2] = 6;
+            board[2][0] = 7;
+            board[2][1] = 8;
+            board[2][2] = 9;
+
+            int[][] newBoard = new int[columnCount][];
+            for (int y = 0; y < columnCount; y++)
+            {
+                newBoard[y] = new int[rowCount];
+                for (int x = 0; x < rowCount; x++)
+                {
+                    newBoard[y][x] = board[x][y];
+                }
+            }
+        }
+
+        [TestMethod]
+        public void Test_Transpose_Board()
+        {
+            Board board = new(rowCount: 2, columnCount: 3);
+            board.SetCharTile(1, 1, 'A');
+            board.SetCharTile(1, 2, 'B');
+            board.SetCharTile(1, 3, 'C');
+            board.SetCharTile(2, 1, 'D');
+            board.SetCharTile(2, 2, 'E');
+            board.SetCharTile(2, 3, 'F');
+
+            Assert.IsTrue(board.RowCount == 2);
+            Assert.IsTrue(board.ColumnCount == 3);
+            BoardTile boardTile = board.GetBoardTileAtCoordinates(1, 2);
+            Guid guid = boardTile.Guid;
+            Assert.IsTrue(boardTile.CharTile.Letter == 'B');
+            Assert.IsTrue(boardTile.X == 1);
+            Assert.IsTrue(boardTile.Y == 2);
+            Debug.WriteLine(board.PrintBoard());
+            
+            board.Transpose();
+            Assert.IsTrue(board.RowCount == 3);
+            Assert.IsTrue(board.ColumnCount == 2);
+            boardTile = board.GetBoardTileAtCoordinates(1, 2);
+            Assert.IsTrue(boardTile.CharTile.Letter == 'D');
+            Assert.IsTrue(boardTile.X == 1);
+            Assert.IsTrue(boardTile.Y == 2);
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 1).Guid.Equals(guid));
+            Debug.WriteLine(board.PrintBoard());
+
+            board.Transpose();
+            Assert.IsTrue(board.RowCount == 2);
+            Assert.IsTrue(board.ColumnCount == 3);
+            boardTile = board.GetBoardTileAtCoordinates(1, 2);
+            Assert.IsTrue(boardTile.CharTile.Letter == 'B');
+            Assert.IsTrue(boardTile.X == 1);
+            Assert.IsTrue(boardTile.Y == 2);
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 2).Guid.Equals(guid));
+            Debug.WriteLine(board.PrintBoard());
+        }
     }
 }

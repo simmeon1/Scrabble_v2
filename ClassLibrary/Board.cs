@@ -9,8 +9,8 @@ namespace ClassLibrary
     public class Board
     {
         private BoardTile[][] Tiles { get; set; }
-        public int RowCount { get; }
-        public int ColumnCount { get; }
+        public int RowCount { get; set; }
+        public int ColumnCount { get; set; }
 
         public Board(int rowCount, int columnCount)
         {
@@ -55,12 +55,15 @@ namespace ClassLibrary
         {
             BoardTileCollection anchors = GetAnchors();
 
-            StringBuilder sb = new StringBuilder();
+            const string delimiter = "-------------------------------";
+            StringBuilder sb = new StringBuilder(delimiter);
             foreach (BoardTile[] rows in Tiles)
             {
                 if (sb.Length != 0) sb.Append('\n');
                 foreach (BoardTile tile in rows) sb.Append(anchors.Contains(tile) ? "[=]" : $"[{tile.PrintChar()}]");
             }
+            sb.Append('\n');
+            sb.Append(delimiter);
             return sb.ToString();
         }
 
@@ -89,6 +92,27 @@ namespace ClassLibrary
                 i++;
             }
             return new HorizontalBoardWord(boardTilesWithCharTiles);
+        }
+
+        public void Transpose()
+        {
+            BoardTile[][] newBoard = new BoardTile[ColumnCount][];
+            for (int y = 0; y < ColumnCount; y++)
+            {
+                newBoard[y] = new BoardTile[RowCount];
+                for (int x = 0; x < RowCount; x++)
+                {
+                    BoardTile boardTile = Tiles[x][y];
+                    newBoard[y][x] = boardTile;
+                    int temp = boardTile.X;
+                    boardTile.X = boardTile.Y;
+                    boardTile.Y = temp;
+                }
+            }
+            Tiles = newBoard;
+            int temp2 = RowCount;
+            RowCount = ColumnCount;
+            ColumnCount = temp2;
         }
 
         public VerticalBoardWord GetVerticalWordTilesAtCoordinates(int X, int Y)
