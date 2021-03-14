@@ -189,32 +189,30 @@ namespace UnitTests
         public void TestHorizontalBoardWord()
         {
             HorizontalBoardWord horizontalWord;
-            AssertThatCorrectExceptionIsThrown(() => horizontalWord = new HorizontalBoardWord(), ExceptionMessages.ABoardWordMustConsistOf2OrMoreLetters);
 
             BoardTile char1 = new(1, 2, new CharTile('A'));
             BoardTile char2 = new(1, 3, new CharTile('B'));
             BoardTile char3 = new(1, 4, new CharTile('C'));
             List<BoardTile> charList = new() { char1, char2, char3 };
-
             horizontalWord = new HorizontalBoardWord(charList);
+            Assert.IsTrue(horizontalWord.BoardTilesAreConnected());
 
             char1.X = 2;
-            AssertThatCorrectExceptionIsThrown(() => horizontalWord = new HorizontalBoardWord(charList), ExceptionMessages.BoardTilesAreNotHorizontallyConnected);
+            Assert.IsTrue(!horizontalWord.BoardTilesAreConnected());
 
             char1.X = 1;
             char1.Y = 1;
-            AssertThatCorrectExceptionIsThrown(() => horizontalWord = new HorizontalBoardWord(charList), ExceptionMessages.BoardTilesAreNotHorizontallyConnected);
+            Assert.IsTrue(!horizontalWord.BoardTilesAreConnected());
 
             char1.Y = 2;
             char3.Y = 5;
-            AssertThatCorrectExceptionIsThrown(() => horizontalWord = new HorizontalBoardWord(charList), ExceptionMessages.BoardTilesAreNotHorizontallyConnected);
+            Assert.IsTrue(!horizontalWord.BoardTilesAreConnected());
         }
 
         [TestMethod]
         public void TestVerticalBoardWord()
         {
             VerticalBoardWord VerticalWord;
-            AssertThatCorrectExceptionIsThrown(() => VerticalWord = new VerticalBoardWord(), ExceptionMessages.ABoardWordMustConsistOf2OrMoreLetters);
 
             BoardTile char1 = new(2, 1, new CharTile('A'));
             BoardTile char2 = new(3, 1, new CharTile('B'));
@@ -222,17 +220,18 @@ namespace UnitTests
             List<BoardTile> charList = new() { char1, char2, char3 };
 
             VerticalWord = new VerticalBoardWord(charList);
+            Assert.IsTrue(VerticalWord.BoardTilesAreConnected());
 
             char1.Y = 2;
-            AssertThatCorrectExceptionIsThrown(() => VerticalWord = new VerticalBoardWord(charList), ExceptionMessages.BoardTilesAreNotVerticallyConnected);
+            Assert.IsTrue(!VerticalWord.BoardTilesAreConnected());
 
             char1.Y = 1;
             char1.X = 1;
-            AssertThatCorrectExceptionIsThrown(() => VerticalWord = new VerticalBoardWord(charList), ExceptionMessages.BoardTilesAreNotVerticallyConnected);
+            Assert.IsTrue(!VerticalWord.BoardTilesAreConnected());
 
             char1.X = 2;
             char3.X = 5;
-            AssertThatCorrectExceptionIsThrown(() => VerticalWord = new VerticalBoardWord(charList), ExceptionMessages.BoardTilesAreNotVerticallyConnected);
+            Assert.IsTrue(!VerticalWord.BoardTilesAreConnected());
         }
 
         [TestMethod]

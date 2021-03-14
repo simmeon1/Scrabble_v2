@@ -9,14 +9,11 @@ namespace ClassLibrary
     {
         protected abstract int GetCoordinateThatIsConsistentInTheWord(BoardTile boardTile);
         protected abstract int GetCoordinateThatIsIncrementalInTheWord(BoardTile boardTile);
-        protected abstract string ErrorMessageIfTilesAreNotConnected { get; }
         protected BoardWord(List<BoardTile> boardTiles = null) : base(boardTiles)
         {
-            if (BoardTiles.Count < 2) throw new Exception(ExceptionMessages.ABoardWordMustConsistOf2OrMoreLetters);
-            if (!BoardTilesAreConnected()) throw new Exception($"{ErrorMessageIfTilesAreNotConnected}");
         }
 
-        private bool BoardTilesAreConnected()
+        public bool BoardTilesAreConnected()
         {
             HashSet<int> consistentCoordinatesFound = new HashSet<int>();
             List<int> incrementalCoordinatesFound = new List<int>();

@@ -5,8 +5,6 @@ namespace ClassLibrary
 {
     public class VerticalBoardWord : BoardWord
     {
-        protected override string ErrorMessageIfTilesAreNotConnected => ExceptionMessages.BoardTilesAreNotVerticallyConnected;
-
         public VerticalBoardWord(List<BoardTile> boardTiles = null) : base(boardTiles)
         {
         }
