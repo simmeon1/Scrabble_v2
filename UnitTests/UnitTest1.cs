@@ -378,7 +378,7 @@ namespace UnitTests
             Assert.IsTrue(boardTile.X == 1);
             Assert.IsTrue(boardTile.Y == 2);
             Debug.WriteLine(board.PrintBoard());
-            
+
             board.Transpose();
             Assert.IsTrue(board.RowCount == 3);
             Assert.IsTrue(board.ColumnCount == 2);
@@ -398,6 +398,36 @@ namespace UnitTests
             Assert.IsTrue(boardTile.Y == 2);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 2).Guid.Equals(guid));
             Debug.WriteLine(board.PrintBoard());
+        }
+
+        [TestMethod]
+        public void Test_GetAnchorsAndTheirCrossChecks()
+        {
+            Board board = new(3, 7);
+            board.SetCharTile(2, 2, 'B');
+            board.SetCharTile(2, 3, 'O');
+            board.SetCharTile(2, 4, 'I');
+            board.SetCharTile(2, 5, 'N');
+            board.SetCharTile(2, 6, 'G');
+
+            Debug.WriteLine(board.PrintBoard());
+
+            BoardTileCollection anchors = board.GetAnchors();
+            Dictionary<BoardTile, HashSet<char>> anchorsWithCrossChecks = board.PopulateAnchorCrossChecks(anchors, Globals.BoingDawg);
+
+            Assert.IsTrue(anchorsWithCrossChecks.Count == 12);
+            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(1, 2)].Count == 2);
+            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(1, 3)].Count == 17);
+            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(1, 4)].Count == 13);
+            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(1, 5)].Count == 5);
+            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(1, 6)].Count == 2);
+            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(3, 2)].Count == 5);
+            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(3, 3)].Count == 16);
+            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(3, 4)].Count == 6);
+            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(3, 5)].Count == 5);
+            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(3, 6)].Count == 3);
+            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(2, 1)].Count == 0);
+            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(2, 7)].Count == 1);
         }
     }
 }

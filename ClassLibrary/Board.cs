@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Diagnostics;
+using DawgSharp;
 
 namespace ClassLibrary
 {
@@ -11,6 +12,7 @@ namespace ClassLibrary
         private BoardTile[][] Tiles { get; set; }
         public int RowCount { get; set; }
         public int ColumnCount { get; set; }
+        private bool Transposed { get; set; }
 
         public Board(int rowCount, int columnCount)
         {
@@ -113,6 +115,46 @@ namespace ClassLibrary
             int temp2 = RowCount;
             RowCount = ColumnCount;
             ColumnCount = temp2;
+            Transposed = !Transposed;
+        }
+
+
+        public Dictionary<BoardTile, HashSet<char>> PopulateAnchorCrossChecks(BoardTileCollection anchorCollection, Dawg<bool> dawg)
+        {
+            char[] charsFromAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+
+            Dictionary<BoardTile, HashSet<char>> tilesAndTheirCrossChecks_FirstPass = DoVerticalCrossCheckForAnchors(anchorCollection, dawg, charsFromAlphabet);
+            Transpose();
+            Dictionary<BoardTile, HashSet<char>> tilesAndTheirCrossChecks_SecondPass = DoVerticalCrossCheckForAnchors(anchorCollection, dawg, charsFromAlphabet);
+            Transpose();
+
+            Dictionary<BoardTile, HashSet<char>> tilesAndTheirCrossChecks_Final = new();
+            foreach (BoardTile anchor in anchorCollection)
+            {
+                tilesAndTheirCrossChecks_Final.Add(anchor, new HashSet<char>());
+                foreach (char ch in charsFromAlphabet)
+                {
+                    if (tilesAndTheirCrossChecks_FirstPass[anchor].Contains(ch) && tilesAndTheirCrossChecks_SecondPass[anchor].Contains(ch)) tilesAndTheirCrossChecks_Final[anchor].Add(ch);
+                }
+            }
+            return tilesAndTheirCrossChecks_Final;
+        }
+
+        private Dictionary<BoardTile, HashSet<char>> DoVerticalCrossCheckForAnchors(BoardTileCollection anchorCollection, Dawg<bool> dawg, char[] charsFromAlphabet)
+        {
+            Dictionary<BoardTile, HashSet<char>> tilesAndTheirCrossChecks = new();
+            foreach (BoardTile anchor in anchorCollection)
+            {
+                tilesAndTheirCrossChecks.Add(anchor, new HashSet<char>());
+                foreach (char ch in charsFromAlphabet)
+                {
+                    SetCharTile(anchor.X, anchor.Y, ch);
+                    VerticalBoardWord verticalWord = GetVerticalWordTilesAtCoordinates(anchor.X, anchor.Y);
+                    if (verticalWord.Count < 2 || dawg[verticalWord.GetWord()] == true) tilesAndTheirCrossChecks[anchor].Add(ch);
+                    SetCharTile(anchor.X, anchor.Y, null);
+                }
+            }
+            return tilesAndTheirCrossChecks;
         }
 
         public VerticalBoardWord GetVerticalWordTilesAtCoordinates(int X, int Y)
