@@ -15,6 +15,5 @@ namespace ClassLibrary
             Letter = letter;
             Score = score;
         }
-
     }
 }

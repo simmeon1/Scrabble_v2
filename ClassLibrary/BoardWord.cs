@@ -18,7 +18,6 @@ namespace ClassLibrary
 
         private bool BoardTilesAreConnected()
         {
-
             HashSet<int> consistentCoordinatesFound = new HashSet<int>();
             List<int> incrementalCoordinatesFound = new List<int>();
 
@@ -44,7 +43,7 @@ namespace ClassLibrary
 
         public string GetWord()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             foreach (BoardTile boardTile in BoardTiles) sb.Append(boardTile.PrintChar());
             return sb.ToString();
         }
