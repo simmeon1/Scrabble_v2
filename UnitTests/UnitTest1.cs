@@ -1,10 +1,12 @@
 using ClassLibrary;
+using DawgSharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace UnitTests
 {
@@ -269,6 +271,31 @@ namespace UnitTests
             Assert.IsTrue(board.GetAnchors().Count() == 11);
 
             Debug.WriteLine(board.PrintBoard());
+        }
+
+        [TestMethod]
+        [Ignore]
+        public void GenerateDawgFromBoingFile()
+        {
+            string fileContents = File.ReadAllText("boing_crosschecks.txt");
+            List<string> boingWords = Regex.Matches(fileContents, "\\w+").Select(m => m.Value).ToList();
+
+            DawgBuilder<bool> dawgBuilder = new();
+            foreach (string word in boingWords) dawgBuilder.Insert(word, true);
+
+            Dawg<bool> dawg = dawgBuilder.BuildDawg(); // Computer is working.  Please wait ...
+
+            using (FileStream file = File.Create("boingDAWG.bin")) dawg.SaveTo(file);
+
+            //Now read the file back in and check if a particular word is in the dictionary:
+            Dawg<bool> dawg2 = Dawg<bool>.Load(File.Open("boingDAWG.bin", FileMode.Open));
+        }
+
+        [TestMethod]
+        public void TestDawgFile()
+        {
+            Dawg<bool> boingDawg = Globals.BoingDawg;
+            Assert.IsTrue(boingDawg.Count() == 64);
         }
     }
 }
