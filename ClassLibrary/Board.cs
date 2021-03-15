@@ -118,45 +118,6 @@ namespace ClassLibrary
             Transposed = !Transposed;
         }
 
-
-        public Dictionary<BoardTile, HashSet<char>> PopulateAnchorCrossChecks(BoardTileCollection anchorCollection, Dawg<bool> dawg)
-        {
-            char[] charsFromAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-
-            Dictionary<BoardTile, HashSet<char>> tilesAndTheirCrossChecks_FirstPass = DoVerticalCrossCheckForAnchors(anchorCollection, dawg, charsFromAlphabet);
-            Transpose();
-            Dictionary<BoardTile, HashSet<char>> tilesAndTheirCrossChecks_SecondPass = DoVerticalCrossCheckForAnchors(anchorCollection, dawg, charsFromAlphabet);
-            Transpose();
-
-            Dictionary<BoardTile, HashSet<char>> tilesAndTheirCrossChecks_Final = new();
-            foreach (BoardTile anchor in anchorCollection)
-            {
-                tilesAndTheirCrossChecks_Final.Add(anchor, new HashSet<char>());
-                foreach (char ch in charsFromAlphabet)
-                {
-                    if (tilesAndTheirCrossChecks_FirstPass[anchor].Contains(ch) && tilesAndTheirCrossChecks_SecondPass[anchor].Contains(ch)) tilesAndTheirCrossChecks_Final[anchor].Add(ch);
-                }
-            }
-            return tilesAndTheirCrossChecks_Final;
-        }
-
-        private Dictionary<BoardTile, HashSet<char>> DoVerticalCrossCheckForAnchors(BoardTileCollection anchorCollection, Dawg<bool> dawg, char[] charsFromAlphabet)
-        {
-            Dictionary<BoardTile, HashSet<char>> tilesAndTheirCrossChecks = new();
-            foreach (BoardTile anchor in anchorCollection)
-            {
-                tilesAndTheirCrossChecks.Add(anchor, new HashSet<char>());
-                foreach (char ch in charsFromAlphabet)
-                {
-                    SetCharTile(anchor.X, anchor.Y, ch);
-                    VerticalBoardWord verticalWord = GetVerticalWordTilesAtCoordinates(anchor.X, anchor.Y);
-                    if (verticalWord.Count < 2 || dawg[verticalWord.GetWord()] == true) tilesAndTheirCrossChecks[anchor].Add(ch);
-                    SetCharTile(anchor.X, anchor.Y, null);
-                }
-            }
-            return tilesAndTheirCrossChecks;
-        }
-
         public VerticalBoardWord GetVerticalWordTilesAtCoordinates(int X, int Y)
         {
             if (!CoordinatesExist(X, Y)) return null;
@@ -188,40 +149,10 @@ namespace ClassLibrary
         {
             return new AnchorCollector().GetAnchors(this);
         }
-
-        private class AnchorCollector
+        
+        public Dictionary<BoardTile, HashSet<char>> GetAnchorsAndTheirCrossChecks(Dawg<bool> dawg)
         {
-            private List<BoardTile> Anchors { get; set; }
-            private HashSet<BoardTile> AddedAnchors { get; set; }
-            private Board Board { get; set; }
-
-            public BoardTileCollection GetAnchors(Board board)
-            {
-                Board = board;
-                Anchors = new List<BoardTile>();
-                AddedAnchors = new HashSet<BoardTile>();
-
-                for (int X = 1; X <= Board.RowCount; X++)
-                {
-                    for (int Y = 1; Y <= Board.ColumnCount; Y++)
-                    {
-                        if (Board.GetBoardTileAtCoordinates(X, Y).CharTile == null) continue;
-                        AnalyseBoardTileAtCoordinatesAndAddIfItIsAnAnchor(X - 1, Y);
-                        AnalyseBoardTileAtCoordinatesAndAddIfItIsAnAnchor(X + 1, Y);
-                        AnalyseBoardTileAtCoordinatesAndAddIfItIsAnAnchor(X, Y - 1);
-                        AnalyseBoardTileAtCoordinatesAndAddIfItIsAnAnchor(X, Y + 1);
-                    }
-                }
-                return new BoardTileCollection(Anchors.ToList());
-            }
-
-            private void AnalyseBoardTileAtCoordinatesAndAddIfItIsAnAnchor(int X, int Y)
-            {
-                BoardTile tile = Board.GetBoardTileAtCoordinates(X, Y);
-                if (tile == null || tile.CharTile != null || AddedAnchors.Contains(tile)) return;
-                Anchors.Add(tile);
-                AddedAnchors.Add(tile);
-            }
+            return new AnchorCrossCheckCollector().GetAnchorsAndTheirCrossChecks(this, dawg);
         }
     }
 }

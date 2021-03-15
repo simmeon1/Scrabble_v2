@@ -412,8 +412,7 @@ namespace UnitTests
 
             Debug.WriteLine(board.PrintBoard());
 
-            BoardTileCollection anchors = board.GetAnchors();
-            Dictionary<BoardTile, HashSet<char>> anchorsWithCrossChecks = board.PopulateAnchorCrossChecks(anchors, Globals.BoingDawg);
+            Dictionary<BoardTile, HashSet<char>> anchorsWithCrossChecks = board.GetAnchorsAndTheirCrossChecks(Globals.BoingDawg);
 
             Assert.IsTrue(anchorsWithCrossChecks.Count == 12);
             Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(1, 2)].Count == 2);
@@ -428,6 +427,14 @@ namespace UnitTests
             Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(3, 6)].Count == 3);
             Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(2, 1)].Count == 0);
             Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(2, 7)].Count == 1);
+
+            Assert.IsTrue(board.RowCount == 3);
+            Assert.IsTrue(board.ColumnCount == 7);
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(2,3).CharTile.Letter == 'O');
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(2,3).X == 2);
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(2,3).Y == 3);
+            
+            Debug.WriteLine(board.PrintBoard());
         }
     }
 }
