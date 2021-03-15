@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Diagnostics;
 
 namespace ClassLibrary
 {
+    [DebuggerDisplay("{GetWord()}")]
     public abstract class BoardWord : BoardTileCollection
     {
         protected abstract int GetCoordinateThatIsConsistentInTheWord(BoardTile boardTile);

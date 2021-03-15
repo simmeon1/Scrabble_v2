@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace UnitTests
@@ -125,7 +126,8 @@ namespace UnitTests
             HorizontalBoardWord word0 = board.GetHorizontalWordTilesAtCoordinates(-1, -1);
             Assert.IsTrue(word0 == null);
 
-            string word1 = board.GetHorizontalWordTilesAtCoordinates(1, 3).GetWord();
+            HorizontalBoardWord horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 3);
+            string word1 = horizontalBoardWord.GetWord();
             Assert.IsTrue(word1.Equals("HELLO"));
 
             string word2 = board.GetHorizontalWordTilesAtCoordinates(2, 5).GetWord();
@@ -272,11 +274,18 @@ namespace UnitTests
             Debug.WriteLine(board.PrintBoard());
         }
 
+        //https://boardgames.stackexchange.com/questions/38366/latest-collins-scrabble-words-list-in-text-file
         [TestMethod]
         [Ignore]
-        public void GenerateDawgFromBoingFile()
+        public void GenerateDawgFromFile()
         {
-            string fileContents = File.ReadAllText("boing_crosschecks.txt");
+            const string textFile = "boing_crosschecks.txt";
+            //const string textFile = "englishWords.txt";
+            
+            const string binFile = "boingDAWG.bin";
+            //const string binFile = "englishDawg.bin";
+
+            string fileContents = File.ReadAllText(textFile);
             List<string> boingWords = Regex.Matches(fileContents, "\\w+").Select(m => m.Value).ToList();
 
             DawgBuilder<bool> dawgBuilder = new();
@@ -284,10 +293,10 @@ namespace UnitTests
 
             Dawg<bool> dawg = dawgBuilder.BuildDawg(); // Computer is working.  Please wait ...
 
-            using (FileStream file = File.Create("boingDAWG.bin")) dawg.SaveTo(file);
+            using (FileStream file = File.Create(binFile)) dawg.SaveTo(file);
 
             //Now read the file back in and check if a particular word is in the dictionary:
-            Dawg<bool> dawg2 = Dawg<bool>.Load(File.Open("boingDAWG.bin", FileMode.Open));
+            Dawg<bool> dawg2 = Dawg<bool>.Load(File.Open(binFile, FileMode.Open));
         }
 
         [TestMethod]
@@ -430,10 +439,10 @@ namespace UnitTests
 
             Assert.IsTrue(board.RowCount == 3);
             Assert.IsTrue(board.ColumnCount == 7);
-            Assert.IsTrue(board.GetBoardTileAtCoordinates(2,3).CharTile.Letter == 'O');
-            Assert.IsTrue(board.GetBoardTileAtCoordinates(2,3).X == 2);
-            Assert.IsTrue(board.GetBoardTileAtCoordinates(2,3).Y == 3);
-            
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 3).CharTile.Letter == 'O');
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 3).X == 2);
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 3).Y == 3);
+
             Debug.WriteLine(board.PrintBoard());
         }
     }
