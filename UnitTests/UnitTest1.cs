@@ -281,7 +281,7 @@ namespace UnitTests
         {
             const string textFile = "boing_crosschecks.txt";
             //const string textFile = "englishWords.txt";
-            
+
             const string binFile = "boingDAWG.bin";
             //const string binFile = "englishDawg.bin";
 
@@ -410,7 +410,7 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void Test_GetAnchorsAndTheirCrossChecks()
+        public void Test_GetAnchorsAndTheirCrossChecks_BoingDawg()
         {
             Board board = new(3, 7);
             board.SetCharTile(2, 2, 'B');
@@ -444,6 +444,19 @@ namespace UnitTests
             Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 3).Y == 3);
 
             Debug.WriteLine(board.PrintBoard());
+        }
+
+        [TestMethod]
+        public void Test_GetAnchorsAndTheirCrossChecks_EnglishDawg()
+        {
+            Board board = new(3, 7);
+            board.SetCharTile(2, 2, 'B');
+            board.SetCharTile(2, 3, 'O');
+            board.SetCharTile(2, 4, 'I');
+            board.SetCharTile(2, 5, 'N');
+            board.SetCharTile(2, 6, 'G');
+            Dictionary<BoardTile, HashSet<char>> anchorsWithCrossChecks = board.GetAnchorsAndTheirCrossChecks(Globals.EnglishDawg);
+            Assert.IsTrue(anchorsWithCrossChecks.Count > 0);
         }
     }
 }
