@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace ClassLibrary
 {
+    [DebuggerDisplay("{Letter}, {Score}")]
     public class CharTile
     {
         public char Letter { get; set; }

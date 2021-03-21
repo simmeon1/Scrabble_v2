@@ -21,7 +21,7 @@ namespace ClassLibrary
 
         public static char ToUpper(this char c)
         {
-            return c.ToString().ToUpper().ToCharArray()[0];
+            return c.ToUpper();
         }
     }
 }

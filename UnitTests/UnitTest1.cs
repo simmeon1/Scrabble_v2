@@ -412,30 +412,38 @@ namespace UnitTests
         [TestMethod]
         public void Test_GetAnchorsAndTheirCrossChecks_BoingDawg()
         {
-            Board board = new(3, 7);
+            Board board = new(3, 7, Globals.BoingDawg);
             board.SetCharTile(2, 2, 'B');
             board.SetCharTile(2, 3, 'O');
             board.SetCharTile(2, 4, 'I');
             board.SetCharTile(2, 5, 'N');
             board.SetCharTile(2, 6, 'G');
 
+            BoardTileCollection boardAnchors = board.GetAnchors();
+
             Debug.WriteLine(board.PrintBoard());
 
-            Dictionary<BoardTile, HashSet<char>> anchorsWithCrossChecks = board.GetAnchorsAndTheirCrossChecks(Globals.BoingDawg);
+            Dictionary<BoardTile, HashSet<char>> crossChecksForNormalBoard = board.GetCrossChecksForBoardTiles(boardAnchors);
 
-            Assert.IsTrue(anchorsWithCrossChecks.Count == 12);
-            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(1, 2)].Count == 2);
-            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(1, 3)].Count == 17);
-            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(1, 4)].Count == 13);
-            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(1, 5)].Count == 5);
-            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(1, 6)].Count == 2);
-            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(3, 2)].Count == 5);
-            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(3, 3)].Count == 16);
-            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(3, 4)].Count == 6);
-            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(3, 5)].Count == 5);
-            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(3, 6)].Count == 3);
-            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(2, 1)].Count == 0);
-            Assert.IsTrue(anchorsWithCrossChecks[board.GetBoardTileAtCoordinates(2, 7)].Count == 1);
+            Assert.IsTrue(crossChecksForNormalBoard.Count == 12);
+            Assert.IsTrue(crossChecksForNormalBoard[board.GetBoardTileAtCoordinates(1, 2)].Count == 2);
+            Assert.IsTrue(crossChecksForNormalBoard[board.GetBoardTileAtCoordinates(1, 3)].Count == 17);
+            Assert.IsTrue(crossChecksForNormalBoard[board.GetBoardTileAtCoordinates(1, 4)].Count == 13);
+            Assert.IsTrue(crossChecksForNormalBoard[board.GetBoardTileAtCoordinates(1, 5)].Count == 5);
+            Assert.IsTrue(crossChecksForNormalBoard[board.GetBoardTileAtCoordinates(1, 6)].Count == 2);
+            Assert.IsTrue(crossChecksForNormalBoard[board.GetBoardTileAtCoordinates(3, 2)].Count == 5);
+            Assert.IsTrue(crossChecksForNormalBoard[board.GetBoardTileAtCoordinates(3, 3)].Count == 16);
+            Assert.IsTrue(crossChecksForNormalBoard[board.GetBoardTileAtCoordinates(3, 4)].Count == 6);
+            Assert.IsTrue(crossChecksForNormalBoard[board.GetBoardTileAtCoordinates(3, 5)].Count == 5);
+            Assert.IsTrue(crossChecksForNormalBoard[board.GetBoardTileAtCoordinates(3, 6)].Count == 3);
+
+            board.Transpose();
+            Dictionary<BoardTile, HashSet<char>> crossChecksForTransposedBoard = board.GetCrossChecksForBoardTiles(boardAnchors);
+
+            Assert.IsTrue(crossChecksForTransposedBoard[board.GetBoardTileAtCoordinates(1, 2)].Count == 0);
+            Assert.IsTrue(crossChecksForTransposedBoard[board.GetBoardTileAtCoordinates(7, 2)].Count == 1);
+
+            board.Transpose();
 
             Assert.IsTrue(board.RowCount == 3);
             Assert.IsTrue(board.ColumnCount == 7);
@@ -455,8 +463,109 @@ namespace UnitTests
             board.SetCharTile(2, 4, 'I');
             board.SetCharTile(2, 5, 'N');
             board.SetCharTile(2, 6, 'G');
-            Dictionary<BoardTile, HashSet<char>> anchorsWithCrossChecks = board.GetAnchorsAndTheirCrossChecks(Globals.EnglishDawg);
+            Dictionary<BoardTile, HashSet<char>> anchorsWithCrossChecks = board.GetCrossChecksForBoardTiles(board.GetAnchors());
             Assert.IsTrue(anchorsWithCrossChecks.Count > 0);
+        }
+
+        public DawgNode GetDawgNode(string word)
+        {
+            Dawg<bool> dawg = Globals.EnglishDawg;
+            IEnumerable<KeyValuePair<string, bool>> wordsContainingPrefix = dawg.MatchPrefix(word);
+            HashSet<char> lettersThatCanFollowPrefix = new();
+            foreach (KeyValuePair<string, bool> wordContainingPrefix_Pair in wordsContainingPrefix)
+            {
+                string wordContainingPrefix = wordContainingPrefix_Pair.Key;
+                if (!wordContainingPrefix.Equals(word)) lettersThatCanFollowPrefix.Add(wordContainingPrefix[word.Length]);
+            }
+            return new DawgNode(word, lettersThatCanFollowPrefix);
+        }
+
+        [TestMethod]
+        public void Test_BuildWords()
+        {
+            Board board = new(1, 8);
+            board.SetCharTile(1, 3, 'L');
+            board.SetCharTile(1, 4, 'O');
+            board.SetCharTile(1, 5, 'V');
+            board.SetCharTile(1, 6, 'E');
+
+
+            //string word = board.GetHorizontalWordTilesAtCoordinates(1, 3).GetWord();
+            //foreach (KeyValuePair<BoardTile, HashSet<char>> anchorAndItsCrossChecks in anchorsWithCrossChecks)
+            //{
+            //    BoardTile anchor = anchorAndItsCrossChecks.Key;
+            //    HashSet<char> crossChecks = anchorAndItsCrossChecks.Value;
+            //    foreach (char ch in crossChecks)
+            //    {
+            //        if (!playerRack.Contains(ch)) continue;
+            //    }
+            //}
+
+            //List<char> playerRack = Globals.GetEnglishCharactersArray().ToList();
+            List<char> playerRack = "XDRSUNGLY".ToList();
+            Dictionary<BoardTile, HashSet<char>> anchorsWithCrossChecks = board.GetCrossChecksForBoardTiles(board.GetAnchors());
+            BoardTile boardTile = board.GetBoardTileAtCoordinates(1, 2);
+            DawgNode node = GetDawgNode("");
+            LeftPart("", node, 10, boardTile, anchorsWithCrossChecks[boardTile], playerRack, board);
+        }
+
+        public void LeftPart(string partialWord, DawgNode node, int limit, BoardTile anchor, HashSet<char> anchorCrossChecks, List<char> playerRack, Board board)
+        {
+            ExtendRight(partialWord, node, anchor, anchorCrossChecks, playerRack, board);
+            if (limit <= 0) return;
+            foreach (char edge in node.Edges)
+            {
+                if (!playerRack.Contains(edge)) continue;
+
+                char rackChar = playerRack.FirstOrDefault(t => t == edge);
+                playerRack.Remove(rackChar);
+                string partialWordPlusEdge = partialWord + rackChar.ToString();
+                DawgNode nextNode = GetDawgNode(partialWordPlusEdge);
+                LeftPart(partialWordPlusEdge, nextNode, limit - 1, anchor, anchorCrossChecks, playerRack, board);
+            }
+        }
+
+        private void ExtendRight(string partialWord, DawgNode node, BoardTile boardTile, HashSet<char> boardTileCrossChecks, List<char> playerRack, Board board)
+        {
+
+            if (boardTile == null)
+            {
+                if (Globals.EnglishDawg[partialWord]) LegalMove(partialWord);
+            }
+
+            else if (boardTile.CharTile == null)
+            {
+                if (Globals.EnglishDawg[partialWord]) LegalMove(partialWord);
+                foreach (char edge in node.Edges)
+                {
+                    if (!playerRack.Contains(edge) || (boardTileCrossChecks != null && !boardTileCrossChecks.Contains(edge))) continue;
+
+                    char rackChar = playerRack.FirstOrDefault(t => t == edge);
+                    playerRack.Remove(rackChar);
+                    string partialWordPlusEdge = partialWord + rackChar.ToString();
+                    DawgNode nextNode = GetDawgNode(partialWordPlusEdge);
+                    BoardTile nextBoardTile = board.GetBoardTileAtCoordinates(boardTile.X, boardTile.Y + 1);
+                    HashSet<char> nextBoardTileCrossChecks = board.GetCrossChecksForBoardTile(nextBoardTile);
+                    ExtendRight(partialWordPlusEdge, nextNode, nextBoardTile, nextBoardTileCrossChecks, playerRack, board);
+                    playerRack.Add(rackChar);
+                }
+            }
+            else
+            {
+                char charOnBoardTile = boardTile.CharTile.Letter;
+                if (!node.Edges.Contains(charOnBoardTile)) return;
+
+                string partialWordPlusEdge = partialWord + charOnBoardTile.ToString();
+                DawgNode nextNode = GetDawgNode(partialWordPlusEdge);
+                BoardTile nextBoardTile = board.GetBoardTileAtCoordinates(boardTile.X, boardTile.Y + 1);
+                HashSet<char> nextBoardTileCrossChecks = board.GetCrossChecksForBoardTile(nextBoardTile);
+                ExtendRight(partialWordPlusEdge, nextNode, nextBoardTile, nextBoardTileCrossChecks, playerRack, board);
+            }
+        }
+
+        private void LegalMove(string partialWord)
+        {
+            Debug.WriteLine(partialWord);
         }
     }
 }

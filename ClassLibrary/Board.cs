@@ -7,14 +7,16 @@ using DawgSharp;
 
 namespace ClassLibrary
 {
+    [DebuggerDisplay("{PrintBoard()}")]
     public class Board
     {
         private BoardTile[][] Tiles { get; set; }
         public int RowCount { get; set; }
         public int ColumnCount { get; set; }
+        public Dawg<bool> Dawg { get; set; }
         private bool Transposed { get; set; }
 
-        public Board(int rowCount, int columnCount)
+        public Board(int rowCount, int columnCount, Dawg<bool> dawg = null)
         {
             if (rowCount < 1) throw new Exception(ExceptionMessages.BoardMustHaveAtLeastOneRow);
             if (columnCount < 1) throw new Exception(ExceptionMessages.BoardMustHaveAtLeastOneColumn);
@@ -28,6 +30,7 @@ namespace ClassLibrary
             Tiles = rowsAndColumns;
             RowCount = rowCount;
             ColumnCount = columnCount;
+            Dawg = dawg ?? Globals.EnglishDawg;
         }
 
         public CharTile SetCharTile(int X, int Y, CharTile c)
@@ -150,9 +153,17 @@ namespace ClassLibrary
             return new AnchorCollector().GetAnchors(this);
         }
         
-        public Dictionary<BoardTile, HashSet<char>> GetAnchorsAndTheirCrossChecks(Dawg<bool> dawg)
+        public Dictionary<BoardTile, HashSet<char>> GetCrossChecksForBoardTiles(BoardTileCollection boardTiles)
         {
-            return new AnchorCrossCheckCollector().GetAnchorsAndTheirCrossChecks(this, dawg);
+            return new CrossCheckCollector().GetCrossChecksForBoardTiles(this, boardTiles);
+        }
+
+        public HashSet<char> GetCrossChecksForBoardTile(BoardTile boardTile)
+        {
+            if (boardTile == null) return null;
+            BoardTileCollection boardTileCollection = new(new List<BoardTile>() { boardTile });
+            Dictionary<BoardTile, HashSet<char>> crossChecksForBoardTileCollection = new CrossCheckCollector().GetCrossChecksForBoardTiles(this, boardTileCollection);
+            return crossChecksForBoardTileCollection.ContainsKey(boardTile) ? crossChecksForBoardTileCollection[boardTile] : null;
         }
     }
 }
