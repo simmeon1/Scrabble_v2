@@ -180,9 +180,9 @@ namespace ClassLibrary
             return crossChecksForBoardTileCollection.ContainsKey(boardTile) ? crossChecksForBoardTileCollection[boardTile] : null;
         }
 
-        public List<string> GetPossibleMoves(BoardTile boardTile, List<char> playerRack)
+        public List<string> GetPossibleMoves(BoardTile anchor, List<char> playerRack)
         {
-            return new MoveFinder(this).GetPossibleMoves(boardTile, playerRack);
+            return new MoveFinder(this).GetPossibleMoves(anchor, playerRack);
         }
     }
 }

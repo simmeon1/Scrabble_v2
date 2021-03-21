@@ -468,7 +468,7 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void Test_BuildWords()
+        public void Test_GetNumberOfNonAnchorTilesToTheLeftOfABoardTile()
         {
             Board board = new(1, 8);
             board.SetCharTile(1, 3, 'L');
@@ -484,11 +484,25 @@ namespace UnitTests
 
             int count2 = board.GetNumberOfNonAnchorTilesToTheLeftOfABoardTile(board.GetBoardTileAtCoordinates(1, 6), board.GetAnchors());
             Assert.IsTrue(count2 == 3);
+        }
 
-            //BoardTile boardTile = board.GetBoardTileAtCoordinates(1, 2);
+        [TestMethod]
+        public void Test_GetWordsWithLoveInTheMiddle()
+        {
+            Board board = new(1, 19);
+            board.SetCharTile(1, 6, 'L');
+            board.SetCharTile(1, 7, 'O');
+            board.SetCharTile(1, 8, 'V');
+            board.SetCharTile(1, 9, 'E');
+
+            BoardTile anchor = board.GetBoardTileAtCoordinates(1, 5);
+            List<char> englishAlphabet = Globals.GetEnglishCharactersArray().ToList();
+            List<char> playerRack = englishAlphabet;
             //List<char> playerRack = "XDRSUNGLY".ToList();
-            //List<string> words = board.GetPossibleMoves(boardTile, playerRack);
-
+            playerRack.AddRange(englishAlphabet);
+            playerRack.AddRange(englishAlphabet);
+            List<string> words = board.GetPossibleMoves(anchor, playerRack);
+            Assert.IsTrue(words.Count == 89);
         }
     }
 }
