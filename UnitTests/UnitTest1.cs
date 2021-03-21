@@ -467,19 +467,6 @@ namespace UnitTests
             Assert.IsTrue(anchorsWithCrossChecks.Count > 0);
         }
 
-        public DawgNode GetDawgNode(string word)
-        {
-            Dawg<bool> dawg = Globals.EnglishDawg;
-            IEnumerable<KeyValuePair<string, bool>> wordsContainingPrefix = dawg.MatchPrefix(word);
-            HashSet<char> lettersThatCanFollowPrefix = new();
-            foreach (KeyValuePair<string, bool> wordContainingPrefix_Pair in wordsContainingPrefix)
-            {
-                string wordContainingPrefix = wordContainingPrefix_Pair.Key;
-                if (!wordContainingPrefix.Equals(word)) lettersThatCanFollowPrefix.Add(wordContainingPrefix[word.Length]);
-            }
-            return new DawgNode(word, lettersThatCanFollowPrefix);
-        }
-
         [TestMethod]
         public void Test_BuildWords()
         {
@@ -489,83 +476,10 @@ namespace UnitTests
             board.SetCharTile(1, 5, 'V');
             board.SetCharTile(1, 6, 'E');
 
-
-            //string word = board.GetHorizontalWordTilesAtCoordinates(1, 3).GetWord();
-            //foreach (KeyValuePair<BoardTile, HashSet<char>> anchorAndItsCrossChecks in anchorsWithCrossChecks)
-            //{
-            //    BoardTile anchor = anchorAndItsCrossChecks.Key;
-            //    HashSet<char> crossChecks = anchorAndItsCrossChecks.Value;
-            //    foreach (char ch in crossChecks)
-            //    {
-            //        if (!playerRack.Contains(ch)) continue;
-            //    }
-            //}
-
-            //List<char> playerRack = Globals.GetEnglishCharactersArray().ToList();
-            List<char> playerRack = "XDRSUNGLY".ToList();
-            Dictionary<BoardTile, HashSet<char>> anchorsWithCrossChecks = board.GetCrossChecksForBoardTiles(board.GetAnchors());
             BoardTile boardTile = board.GetBoardTileAtCoordinates(1, 2);
-            DawgNode node = GetDawgNode("");
-            LeftPart("", node, 10, boardTile, anchorsWithCrossChecks[boardTile], playerRack, board);
-        }
+            List<char> playerRack = "XDRSUNGLY".ToList();
+            List<string> words = board.GetPossibleMoves(boardTile, playerRack);
 
-        public void LeftPart(string partialWord, DawgNode node, int limit, BoardTile anchor, HashSet<char> anchorCrossChecks, List<char> playerRack, Board board)
-        {
-            ExtendRight(partialWord, node, anchor, anchorCrossChecks, playerRack, board);
-            if (limit <= 0) return;
-            foreach (char edge in node.Edges)
-            {
-                if (!playerRack.Contains(edge)) continue;
-
-                char rackChar = playerRack.FirstOrDefault(t => t == edge);
-                playerRack.Remove(rackChar);
-                string partialWordPlusEdge = partialWord + rackChar.ToString();
-                DawgNode nextNode = GetDawgNode(partialWordPlusEdge);
-                LeftPart(partialWordPlusEdge, nextNode, limit - 1, anchor, anchorCrossChecks, playerRack, board);
-            }
-        }
-
-        private void ExtendRight(string partialWord, DawgNode node, BoardTile boardTile, HashSet<char> boardTileCrossChecks, List<char> playerRack, Board board)
-        {
-
-            if (boardTile == null)
-            {
-                if (Globals.EnglishDawg[partialWord]) LegalMove(partialWord);
-            }
-
-            else if (boardTile.CharTile == null)
-            {
-                if (Globals.EnglishDawg[partialWord]) LegalMove(partialWord);
-                foreach (char edge in node.Edges)
-                {
-                    if (!playerRack.Contains(edge) || (boardTileCrossChecks != null && !boardTileCrossChecks.Contains(edge))) continue;
-
-                    char rackChar = playerRack.FirstOrDefault(t => t == edge);
-                    playerRack.Remove(rackChar);
-                    string partialWordPlusEdge = partialWord + rackChar.ToString();
-                    DawgNode nextNode = GetDawgNode(partialWordPlusEdge);
-                    BoardTile nextBoardTile = board.GetBoardTileAtCoordinates(boardTile.X, boardTile.Y + 1);
-                    HashSet<char> nextBoardTileCrossChecks = board.GetCrossChecksForBoardTile(nextBoardTile);
-                    ExtendRight(partialWordPlusEdge, nextNode, nextBoardTile, nextBoardTileCrossChecks, playerRack, board);
-                    playerRack.Add(rackChar);
-                }
-            }
-            else
-            {
-                char charOnBoardTile = boardTile.CharTile.Letter;
-                if (!node.Edges.Contains(charOnBoardTile)) return;
-
-                string partialWordPlusEdge = partialWord + charOnBoardTile.ToString();
-                DawgNode nextNode = GetDawgNode(partialWordPlusEdge);
-                BoardTile nextBoardTile = board.GetBoardTileAtCoordinates(boardTile.X, boardTile.Y + 1);
-                HashSet<char> nextBoardTileCrossChecks = board.GetCrossChecksForBoardTile(nextBoardTile);
-                ExtendRight(partialWordPlusEdge, nextNode, nextBoardTile, nextBoardTileCrossChecks, playerRack, board);
-            }
-        }
-
-        private void LegalMove(string partialWord)
-        {
-            Debug.WriteLine(partialWord);
         }
     }
 }

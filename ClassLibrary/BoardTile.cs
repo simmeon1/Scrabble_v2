@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Security.Cryptography.X509Certificates;
 
 namespace ClassLibrary
 {
@@ -11,11 +11,13 @@ namespace ClassLibrary
         public int X { get; set; }
         public int Y { get; set; }
         public Guid Guid { get; } = Guid.NewGuid();
-        public BoardTile(int X, int Y, CharTile charTile = null)
+        public HashSet<char> CrossChecks { get; set; }
+        public BoardTile(int x, int y, CharTile charTile = null)
         {
             CharTile = charTile;
-            this.X = X;
-            this.Y = Y;
+            X = x;
+            Y = y;
+            CrossChecks = new HashSet<char>();
         }
 
         public char PrintChar()

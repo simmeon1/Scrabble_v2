@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace UnitTests
+namespace ClassLibrary
 {
     [DebuggerDisplay("{Word}, Count = {Edges.Count}")]
     public class DawgNode

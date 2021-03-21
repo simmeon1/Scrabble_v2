@@ -25,7 +25,7 @@ namespace ClassLibrary
             for (int i = 0; i < rowsAndColumns.Length; i++)
             {
                 rowsAndColumns[i] = new BoardTile[columnCount];
-                for (int j = 0; j < rowsAndColumns[i].Length; j++) rowsAndColumns[i][j] = new BoardTile(X: i + 1, Y: j + 1);
+                for (int j = 0; j < rowsAndColumns[i].Length; j++) rowsAndColumns[i][j] = new BoardTile(x: i + 1, y: j + 1);
             }
             Tiles = rowsAndColumns;
             RowCount = rowCount;
@@ -75,7 +75,7 @@ namespace ClassLibrary
         public HorizontalBoardWord GetHorizontalWordTilesAtCoordinates(int X, int Y)
         {
             if (!CoordinatesExist(X, Y)) return null;
-            List<BoardTile> boardTilesWithCharTiles = new List<BoardTile>();
+            List<BoardTile> boardTilesWithCharTiles = new();
 
             if (GetBoardTileAtCoordinates(X, Y).CharTile == null) return new HorizontalBoardWord(boardTilesWithCharTiles);
 
@@ -164,6 +164,11 @@ namespace ClassLibrary
             BoardTileCollection boardTileCollection = new(new List<BoardTile>() { boardTile });
             Dictionary<BoardTile, HashSet<char>> crossChecksForBoardTileCollection = new CrossCheckCollector().GetCrossChecksForBoardTiles(this, boardTileCollection);
             return crossChecksForBoardTileCollection.ContainsKey(boardTile) ? crossChecksForBoardTileCollection[boardTile] : null;
+        }
+
+        public List<string> GetPossibleMoves(BoardTile boardTile, List<char> playerRack)
+        {
+            return new MoveFinder(this).GetPossibleMoves(boardTile, playerRack);
         }
     }
 }
