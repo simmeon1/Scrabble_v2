@@ -18,11 +18,11 @@ namespace ClassLibrary
             Board = board;
         }
 
-        public List<string> GetPossibleMoves(BoardTile boardTile, List<char> playerRack)
+        public List<string> GetPossibleMoves(BoardTile anchor, List<char> playerRack)
         {
             ValidWords = new List<string>();
             PlayerRack = playerRack;
-            StartingBoardTile = boardTile;
+            StartingBoardTile = anchor;
 
             HorizontalBoardWord horizontalBoardWordTiles = Board.GetHorizontalWordTilesAtCoordinates(StartingBoardTile.X, StartingBoardTile.Y);
             string word = horizontalBoardWordTiles?.GetWord() ?? "";
@@ -30,7 +30,10 @@ namespace ClassLibrary
 
             StartingBoardTile.CrossChecks = Board.GetCrossChecksForBoardTile(StartingBoardTile);
 
-            LeftPart(node, 1, boardTile);
+            BoardTileCollection boardAnchors = Board.GetAnchors();
+
+            int limit = Board.GetNumberOfNonAnchorTilesToTheLeftOfABoardTile(StartingBoardTile, boardAnchors);
+            LeftPart(node, limit, anchor);
             return ValidWords;
         }
 

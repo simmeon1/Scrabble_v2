@@ -476,9 +476,18 @@ namespace UnitTests
             board.SetCharTile(1, 5, 'V');
             board.SetCharTile(1, 6, 'E');
 
-            BoardTile boardTile = board.GetBoardTileAtCoordinates(1, 2);
-            List<char> playerRack = "XDRSUNGLY".ToList();
-            List<string> words = board.GetPossibleMoves(boardTile, playerRack);
+            int count = board.GetNumberOfNonAnchorTilesToTheLeftOfABoardTile(board.GetBoardTileAtCoordinates(1, 3), board.GetAnchors());
+            Assert.IsTrue(count == 0);
+
+            int count1 = board.GetNumberOfNonAnchorTilesToTheLeftOfABoardTile(board.GetBoardTileAtCoordinates(1, 2), board.GetAnchors());
+            Assert.IsTrue(count1 == 1);
+
+            int count2 = board.GetNumberOfNonAnchorTilesToTheLeftOfABoardTile(board.GetBoardTileAtCoordinates(1, 6), board.GetAnchors());
+            Assert.IsTrue(count2 == 3);
+
+            //BoardTile boardTile = board.GetBoardTileAtCoordinates(1, 2);
+            //List<char> playerRack = "XDRSUNGLY".ToList();
+            //List<string> words = board.GetPossibleMoves(boardTile, playerRack);
 
         }
     }

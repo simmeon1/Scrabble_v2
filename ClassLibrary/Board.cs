@@ -33,6 +33,20 @@ namespace ClassLibrary
             Dawg = dawg ?? Globals.EnglishDawg;
         }
 
+        public int GetNumberOfNonAnchorTilesToTheLeftOfABoardTile(BoardTile boardTile, BoardTileCollection boardAnchors)
+        {
+            int count = 0;
+            int boardTileY = boardTile.Y;
+            while (boardTileY > 0)
+            {
+                BoardTile boardTileToTheLeft = GetBoardTileAtCoordinates(boardTile.X, boardTileY - 1);
+                if (boardTileToTheLeft == null || boardAnchors.Contains(boardTileToTheLeft)) break;
+                count++;
+                boardTileY--;
+            }
+            return count;
+        }
+
         public CharTile SetCharTile(int X, int Y, CharTile c)
         {
             if (!CoordinatesExist(X, Y)) return null;
@@ -152,7 +166,7 @@ namespace ClassLibrary
         {
             return new AnchorCollector().GetAnchors(this);
         }
-        
+
         public Dictionary<BoardTile, HashSet<char>> GetCrossChecksForBoardTiles(BoardTileCollection boardTiles)
         {
             return new CrossCheckCollector().GetCrossChecksForBoardTiles(this, boardTiles);
