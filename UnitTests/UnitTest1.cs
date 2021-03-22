@@ -14,30 +14,54 @@ namespace UnitTests
     [TestClass]
     public class UnitTest1
     {
+
         [TestMethod]
-        public void Test_PrintBoard()
+        public void NewBoard_7RowsAnd10Coulmns_BoardContains7RowsAnd10Columns()
         {
-            Board board = new Board(rowCount: 7, columnCount: 10);
-
-            board.SetCharTile(X: 1, Y: 2, c: new CharTile('H'));
-            board.SetCharTile(X: 2, Y: 2, c: new CharTile('E'));
-            board.SetCharTile(X: 3, Y: 2, c: new CharTile('L'));
-            board.SetCharTile(X: 4, Y: 2, c: new CharTile('L'));
-            board.SetCharTile(X: 5, Y: 2, c: new CharTile('O'));
-
-            string result = board.PrintBoard();
-            Debug.WriteLine(result);
-
-            Assert.IsTrue(board.RowCount == 7);
-            Assert.IsTrue(board.ColumnCount == 10);
+            const int x = 7;
+            const int y = 10;
+            Board board = new(rowCount: x, columnCount: y);
+            Assert.IsTrue(board.Tiles.Length == x);
+            Assert.IsTrue(board.RowCount == x);
+            Assert.IsTrue(board.Tiles[0].Length == y);
+            Assert.IsTrue(board.ColumnCount == y);
         }
 
         [TestMethod]
-        public void GetBoardTileAtCoordinatesTests()
+        public void SetCharTileTest_SettingCharOnValidCoordinates_BoardTileIsPopulatedWithChar_ReturnedObjectIsThePlacedCharTile()
+        {
+            const int x = 1;
+            const int y = 10;
+            Board board = new(x, y);
+            CharTile charTileToPlace = new('A');
+            CharTile placedCharTile = board.SetCharTile(x, y, charTileToPlace);
+            Assert.IsTrue(board.Tiles[x - 1][y - 1].CharTile.Letter == 'A');
+            Assert.IsTrue(placedCharTile == charTileToPlace);
+        }
+
+        [TestMethod]
+        public void SetCharTileTest_SettingCharOnInvalidCoordinates_BoardTileIsNotPlaced_ReturnedObjectIsNull()
+        {
+            const int x = 1;
+            const int y = 10;
+            Board board = new(x, y);
+            CharTile charTileToPlace = new('A');
+            CharTile placedCharTile = board.SetCharTile(99, 99, charTileToPlace);
+            Assert.IsTrue(placedCharTile == null);
+        }
+
+        [TestMethod]
+        public void GetBoardTileCoordinates_PassingValidCoordinates_ReturnedObjectAreNotNull()
         {
             Board board = new(rowCount: 2, columnCount: 2);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 1) != null);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 2) != null);
+        }
+
+        [TestMethod]
+        public void GetBoardTileCoordinates_PassingInvalidCoordinate_ReturnedObjectAreNull()
+        {
+            Board board = new(rowCount: 2, columnCount: 2);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(0, 1) == null);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 0) == null);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(0, 0) == null);
@@ -45,239 +69,297 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void Test_CreateBoard_BoardTilesXsAndYs()
+        public void GetBoardTileAtCoordinates_SettingLetterWOnX2Y3_CharacterOnBoardTileAtX2Y3IsW()
+        {
+            const int x = 2;
+            const int y = 3;
+            Board board = new(rowCount: x, columnCount: y);
+            board.SetCharTile(X: x, Y: y, c: new CharTile('W'));
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(x, y).CharTile.Letter == 'W');
+        }
+
+        [TestMethod]
+        public void PrintBoard_InitiateBoardWith5RowsAnd5Columns_ResultStringContains143CharactersIncludingBoardDelimiters()
+        {
+            Board board = new(rowCount: 5, columnCount: 5);
+
+            board.SetCharTile(X: 1, Y: 2, c: new CharTile('H'));
+            board.SetCharTile(X: 2, Y: 2, c: new CharTile('E'));
+            board.SetCharTile(X: 3, Y: 2, c: new CharTile('L'));
+            board.SetCharTile(X: 4, Y: 2, c: new CharTile('L'));
+            board.SetCharTile(X: 5, Y: 2, c: new CharTile('O'));
+
+            string boardString = board.PrintBoard();
+            Assert.IsTrue(boardString.Length == 143);
+        }
+
+        [TestMethod]
+        public void GetBoardTileAtCoordinates_CreateBoardWith2RowsAnd2Columns_XsAndYsOfBoardTilesAreCorrect()
         {
             Board board = new(rowCount: 2, columnCount: 2);
 
             Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 1).X == 1);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 1).Y == 1);
 
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 2).X == 1);
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 2).Y == 2);
+
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 1).X == 2);
+            Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 1).Y == 1);
+
             Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 2).X == 2);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 2).Y == 2);
         }
 
         [TestMethod]
-        public void BoardCreationException()
+        public void NewBoard_CreationWithBadRowCount_IncorrectRowNumberExceptionIsThrown()
         {
             Board board;
-            AssertThatCorrectExceptionIsThrown(() => board = new Board(0, 1), ExceptionMessages.BoardMustHaveAtLeastOneRow);
-            AssertThatCorrectExceptionIsThrown(() => board = new Board(1, -1), ExceptionMessages.BoardMustHaveAtLeastOneColumn);
-            AssertThatCorrectExceptionIsThrown(() => board = new Board(-3, 0), ExceptionMessages.BoardMustHaveAtLeastOneRow);
+            InvokeActionAndAssertThatCorrectExceptionMessageIsThrown(() => board = new Board(0, 1), ExceptionMessages.BoardMustHaveAtLeastOneRow);
         }
 
         [TestMethod]
-        public void SetCharTileTest()
+        public void NewBoard_CreationWithBadColumnCount_IncorrectColumnNumberExceptionIsThrown()
         {
-            Board board = new(1, 10);
-            CharTile c = new('A');
-            Assert.IsTrue(board.SetCharTile(1, 11, c) == null);
-            Assert.IsTrue(board.SetCharTile(1, 10, c).Equals(c));
-            Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 10).CharTile.Equals(c));
+            Board board;
+            InvokeActionAndAssertThatCorrectExceptionMessageIsThrown(() => board = new Board(1, -1), ExceptionMessages.BoardMustHaveAtLeastOneColumn);
         }
 
-        private static void AssertThatCorrectExceptionIsThrown(Action action, string message)
+        private static void InvokeActionAndAssertThatCorrectExceptionMessageIsThrown(Action action, string message)
         {
             Exception rowError = Assert.ThrowsException<Exception>(() => action.Invoke());
             Assert.IsTrue(rowError.Message.Equals(message));
         }
 
         [TestMethod]
-        public void CharTileCreationExceptions()
+        public void NewCharTile_InitialisationWithLowerCaseChar_ThrowExceptionThatCharMustBeUppercase()
         {
             CharTile c;
-            c = new CharTile('A');
-            c = new CharTile('Z');
-
-            AssertThatCorrectExceptionIsThrown(() => c = new CharTile('a'), ExceptionMessages.LetterCanOnlyBeBetweenAAndZ);
-            AssertThatCorrectExceptionIsThrown(() => c = new CharTile('A', 0), ExceptionMessages.ScoreMustBeGreaterThan0);
+            InvokeActionAndAssertThatCorrectExceptionMessageIsThrown(() => c = new CharTile('a'), ExceptionMessages.LetterCanOnlyBeBetweenAAndZ);
+        }
+        
+        [TestMethod]
+        public void NewCharTile_InitialisationWith0Score_ThrowExceptionThatScoreMustBeMoreThan0()
+        {
+            CharTile c;
+            InvokeActionAndAssertThatCorrectExceptionMessageIsThrown(() => c = new CharTile('A', 0), ExceptionMessages.ScoreMustBeGreaterThan0);
         }
 
         [TestMethod]
-        public void ReadHorizontalWordTest()
+        public void GetHorizontalWordTilesAtCoordinates_WordHelloSetAtMiddleOfRow_AssertThatFullWordIsRetrievedByLookingAtAnyOfTheInvolvedBoardTiles()
         {
-            Board board = new Board(rowCount: 7, columnCount: 7);
+            Board board = new(rowCount: 1, columnCount: 7);
             board.SetCharTile(X: 1, Y: 2, c: new CharTile('H'));
             board.SetCharTile(X: 1, Y: 3, c: new CharTile('E'));
             board.SetCharTile(X: 1, Y: 4, c: new CharTile('L'));
             board.SetCharTile(X: 1, Y: 5, c: new CharTile('L'));
             board.SetCharTile(X: 1, Y: 6, c: new CharTile('O'));
 
-            board.SetCharTile(X: 2, Y: 2, c: new CharTile('F'));
-            board.SetCharTile(X: 2, Y: 3, c: new CharTile('R'));
-            board.SetCharTile(X: 2, Y: 4, c: new CharTile('I'));
-            board.SetCharTile(X: 2, Y: 5, c: new CharTile('E'));
-            board.SetCharTile(X: 2, Y: 6, c: new CharTile('N'));
-            board.SetCharTile(X: 2, Y: 7, c: new CharTile('D'));
+            const string wordToLookFor = "HELLO";
+            HorizontalBoardWord horizontalBoardWord;
 
-            board.SetCharTile(X: 3, Y: 1, c: new CharTile('B'));
-            board.SetCharTile(X: 3, Y: 2, c: new CharTile('Y'));
-            board.SetCharTile(X: 3, Y: 3, c: new CharTile('E'));
-            board.SetCharTile(X: 3, Y: 4, c: new CharTile('B'));
-            board.SetCharTile(X: 3, Y: 5, c: new CharTile('Y'));
-            board.SetCharTile(X: 3, Y: 6, c: new CharTile('E'));
+            horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 2);
+            Assert.IsTrue(horizontalBoardWord.GetWord().Equals(wordToLookFor));
+            
+            horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 3);
+            Assert.IsTrue(horizontalBoardWord.GetWord().Equals(wordToLookFor));
+            
+            horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 4);
+            Assert.IsTrue(horizontalBoardWord.GetWord().Equals(wordToLookFor));
+            
+            horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 5);
+            Assert.IsTrue(horizontalBoardWord.GetWord().Equals(wordToLookFor));
+            
+            horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 6);
+            Assert.IsTrue(horizontalBoardWord.GetWord().Equals(wordToLookFor));
+        }
 
-            board.SetCharTile(X: 4, Y: 4, c: new CharTile('M'));
-            board.SetCharTile(X: 4, Y: 5, c: new CharTile('A'));
-            board.SetCharTile(X: 4, Y: 6, c: new CharTile('T'));
-            board.SetCharTile(X: 4, Y: 7, c: new CharTile('E'));
 
-            Debug.WriteLine(board.PrintBoard());
+        [TestMethod]
+        public void GetHorizontalWordTilesAtCoordinates_WordHelloSetAtStartOfRow_AssertThatFullWordIsRetrievedByLookingAtAnyOfTheInvolvedBoardTiles()
+        {
+            Board board = new(rowCount: 1, columnCount: 6);
+            board.SetCharTile(X: 1, Y: 1, c: new CharTile('H'));
+            board.SetCharTile(X: 1, Y: 2, c: new CharTile('E'));
+            board.SetCharTile(X: 1, Y: 3, c: new CharTile('L'));
+            board.SetCharTile(X: 1, Y: 4, c: new CharTile('L'));
+            board.SetCharTile(X: 1, Y: 5, c: new CharTile('O'));
 
-            HorizontalBoardWord word0 = board.GetHorizontalWordTilesAtCoordinates(-1, -1);
-            Assert.IsTrue(word0 == null);
+            const string wordToLookFor = "HELLO";
+            HorizontalBoardWord horizontalBoardWord;
 
-            HorizontalBoardWord horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 3);
-            string word1 = horizontalBoardWord.GetWord();
-            Assert.IsTrue(word1.Equals("HELLO"));
+            horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 1);
+            Assert.IsTrue(horizontalBoardWord.GetWord().Equals(wordToLookFor));
 
-            string word2 = board.GetHorizontalWordTilesAtCoordinates(2, 5).GetWord();
-            Assert.IsTrue(word2.Equals("FRIEND"));
+            horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 2);
+            Assert.IsTrue(horizontalBoardWord.GetWord().Equals(wordToLookFor));
 
-            string word3 = board.GetHorizontalWordTilesAtCoordinates(3, 1).GetWord();
-            Assert.IsTrue(word3.Equals("BYEBYE"));
+            horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 3);
+            Assert.IsTrue(horizontalBoardWord.GetWord().Equals(wordToLookFor));
 
-            string word4 = board.GetHorizontalWordTilesAtCoordinates(4, 7).GetWord();
-            Assert.IsTrue(word4.Equals("MATE"));
+            horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 4);
+            Assert.IsTrue(horizontalBoardWord.GetWord().Equals(wordToLookFor));
+
+            horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 5);
+            Assert.IsTrue(horizontalBoardWord.GetWord().Equals(wordToLookFor));
         }
 
         [TestMethod]
-        public void ReadVerticalWordTest()
+        public void GetHorizontalWordTilesAtCoordinates_WordHelloSetAtEndOfRow_AssertThatFullWordIsRetrievedByLookingAtAnyOfTheInvolvedBoardTiles()
         {
-            Board board = new Board(rowCount: 7, columnCount: 7);
+            Board board = new(rowCount: 1, columnCount: 6);
+            board.SetCharTile(X: 1, Y: 2, c: new CharTile('H'));
+            board.SetCharTile(X: 1, Y: 3, c: new CharTile('E'));
+            board.SetCharTile(X: 1, Y: 4, c: new CharTile('L'));
+            board.SetCharTile(X: 1, Y: 5, c: new CharTile('L'));
+            board.SetCharTile(X: 1, Y: 6, c: new CharTile('O'));
+
+            const string wordToLookFor = "HELLO";
+            HorizontalBoardWord horizontalBoardWord;
+
+            horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 2);
+            Assert.IsTrue(horizontalBoardWord.GetWord().Equals(wordToLookFor));
+
+            horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 3);
+            Assert.IsTrue(horizontalBoardWord.GetWord().Equals(wordToLookFor));
+
+            horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 4);
+            Assert.IsTrue(horizontalBoardWord.GetWord().Equals(wordToLookFor));
+
+            horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 5);
+            Assert.IsTrue(horizontalBoardWord.GetWord().Equals(wordToLookFor));
+
+            horizontalBoardWord = board.GetHorizontalWordTilesAtCoordinates(1, 6);
+            Assert.IsTrue(horizontalBoardWord.GetWord().Equals(wordToLookFor));
+        }
+
+        [TestMethod]
+        public void GetVerticalWordTilesAtCoordinates_WordHelloSetAtMiddleOfColumn_AssertThatFullWordIsRetrievedByLookingAtAnyOfTheInvolvedBoardTiles()
+        {
+            Board board = new(rowCount: 7, columnCount: 1);
             board.SetCharTile(X: 2, Y: 1, c: new CharTile('H'));
             board.SetCharTile(X: 3, Y: 1, c: new CharTile('E'));
             board.SetCharTile(X: 4, Y: 1, c: new CharTile('L'));
             board.SetCharTile(X: 5, Y: 1, c: new CharTile('L'));
             board.SetCharTile(X: 6, Y: 1, c: new CharTile('O'));
 
-            board.SetCharTile(X: 2, Y: 2, c: new CharTile('F'));
-            board.SetCharTile(X: 3, Y: 2, c: new CharTile('R'));
-            board.SetCharTile(X: 4, Y: 2, c: new CharTile('I'));
-            board.SetCharTile(X: 5, Y: 2, c: new CharTile('E'));
-            board.SetCharTile(X: 6, Y: 2, c: new CharTile('N'));
-            board.SetCharTile(X: 7, Y: 2, c: new CharTile('D'));
+            const string wordToLookFor = "HELLO";
+            VerticalBoardWord VerticalBoardWord;
 
-            board.SetCharTile(X: 1, Y: 3, c: new CharTile('B'));
-            board.SetCharTile(X: 2, Y: 3, c: new CharTile('Y'));
-            board.SetCharTile(X: 3, Y: 3, c: new CharTile('E'));
-            board.SetCharTile(X: 4, Y: 3, c: new CharTile('B'));
-            board.SetCharTile(X: 5, Y: 3, c: new CharTile('Y'));
-            board.SetCharTile(X: 6, Y: 3, c: new CharTile('E'));
+            VerticalBoardWord = board.GetVerticalWordTilesAtCoordinates(2, 1);
+            Assert.IsTrue(VerticalBoardWord.GetWord().Equals(wordToLookFor));
 
-            board.SetCharTile(X: 4, Y: 4, c: new CharTile('M'));
-            board.SetCharTile(X: 5, Y: 4, c: new CharTile('A'));
-            board.SetCharTile(X: 6, Y: 4, c: new CharTile('T'));
-            board.SetCharTile(X: 7, Y: 4, c: new CharTile('E'));
+            VerticalBoardWord = board.GetVerticalWordTilesAtCoordinates(3, 1);
+            Assert.IsTrue(VerticalBoardWord.GetWord().Equals(wordToLookFor));
 
-            Debug.WriteLine(board.PrintBoard());
+            VerticalBoardWord = board.GetVerticalWordTilesAtCoordinates(4, 1);
+            Assert.IsTrue(VerticalBoardWord.GetWord().Equals(wordToLookFor));
 
-            VerticalBoardWord word0 = board.GetVerticalWordTilesAtCoordinates(-1, -1);
-            Assert.IsTrue(word0 == null);
+            VerticalBoardWord = board.GetVerticalWordTilesAtCoordinates(5, 1);
+            Assert.IsTrue(VerticalBoardWord.GetWord().Equals(wordToLookFor));
 
-            string word1 = board.GetVerticalWordTilesAtCoordinates(3, 1).GetWord();
-            Assert.IsTrue(word1.Equals("HELLO"));
-
-            string word2 = board.GetVerticalWordTilesAtCoordinates(5, 2).GetWord();
-            Assert.IsTrue(word2.Equals("FRIEND"));
-
-            string word3 = board.GetVerticalWordTilesAtCoordinates(1, 3).GetWord();
-            Assert.IsTrue(word3.Equals("BYEBYE"));
-
-            string word4 = board.GetVerticalWordTilesAtCoordinates(7, 4).GetWord();
-            Assert.IsTrue(word4.Equals("MATE"));
+            VerticalBoardWord = board.GetVerticalWordTilesAtCoordinates(6, 1);
+            Assert.IsTrue(VerticalBoardWord.GetWord().Equals(wordToLookFor));
         }
 
         [TestMethod]
-        public void TestHorizontalBoardWord()
+        public void GetVerticalWordTilesAtCoordinates_WordHelloSetAtStartOfColumn_AssertThatFullWordIsRetrievedByLookingAtAnyOfTheInvolvedBoardTiles()
         {
-            HorizontalBoardWord horizontalWord;
+            Board board = new(rowCount: 6, columnCount: 1);
+            board.SetCharTile(X: 1, Y: 1, c: new CharTile('H'));
+            board.SetCharTile(X: 2, Y: 1, c: new CharTile('E'));
+            board.SetCharTile(X: 3, Y: 1, c: new CharTile('L'));
+            board.SetCharTile(X: 4, Y: 1, c: new CharTile('L'));
+            board.SetCharTile(X: 5, Y: 1, c: new CharTile('O'));
 
-            BoardTile char1 = new(1, 2, new CharTile('A'));
-            BoardTile char2 = new(1, 3, new CharTile('B'));
-            BoardTile char3 = new(1, 4, new CharTile('C'));
-            List<BoardTile> charList = new() { char1, char2, char3 };
-            horizontalWord = new HorizontalBoardWord(charList);
-            Assert.IsTrue(horizontalWord.BoardTilesAreConnected());
+            const string wordToLookFor = "HELLO";
+            VerticalBoardWord VerticalBoardWord;
 
-            char1.X = 2;
-            Assert.IsTrue(!horizontalWord.BoardTilesAreConnected());
+            VerticalBoardWord = board.GetVerticalWordTilesAtCoordinates(1, 1);
+            Assert.IsTrue(VerticalBoardWord.GetWord().Equals(wordToLookFor));
 
-            char1.X = 1;
-            char1.Y = 1;
-            Assert.IsTrue(!horizontalWord.BoardTilesAreConnected());
+            VerticalBoardWord = board.GetVerticalWordTilesAtCoordinates(2, 1);
+            Assert.IsTrue(VerticalBoardWord.GetWord().Equals(wordToLookFor));
 
-            char1.Y = 2;
-            char3.Y = 5;
-            Assert.IsTrue(!horizontalWord.BoardTilesAreConnected());
+            VerticalBoardWord = board.GetVerticalWordTilesAtCoordinates(3, 1);
+            Assert.IsTrue(VerticalBoardWord.GetWord().Equals(wordToLookFor));
+
+            VerticalBoardWord = board.GetVerticalWordTilesAtCoordinates(4, 1);
+            Assert.IsTrue(VerticalBoardWord.GetWord().Equals(wordToLookFor));
+
+            VerticalBoardWord = board.GetVerticalWordTilesAtCoordinates(5, 1);
+            Assert.IsTrue(VerticalBoardWord.GetWord().Equals(wordToLookFor));
         }
 
         [TestMethod]
-        public void TestVerticalBoardWord()
+        public void GetVerticalWordTilesAtCoordinates_WordHelloSetAtEndOfColumn_AssertThatFullWordIsRetrievedByLookingAtAnyOfTheInvolvedBoardTiles()
         {
-            VerticalBoardWord VerticalWord;
+            Board board = new(rowCount: 6, columnCount: 1);
+            board.SetCharTile(X: 2, Y: 1, c: new CharTile('H'));
+            board.SetCharTile(X: 3, Y: 1, c: new CharTile('E'));
+            board.SetCharTile(X: 4, Y: 1, c: new CharTile('L'));
+            board.SetCharTile(X: 5, Y: 1, c: new CharTile('L'));
+            board.SetCharTile(X: 6, Y: 1, c: new CharTile('O'));
 
-            BoardTile char1 = new(2, 1, new CharTile('A'));
-            BoardTile char2 = new(3, 1, new CharTile('B'));
-            BoardTile char3 = new(4, 1, new CharTile('C'));
-            List<BoardTile> charList = new() { char1, char2, char3 };
+            const string wordToLookFor = "HELLO";
+            VerticalBoardWord VerticalBoardWord;
 
-            VerticalWord = new VerticalBoardWord(charList);
-            Assert.IsTrue(VerticalWord.BoardTilesAreConnected());
+            VerticalBoardWord = board.GetVerticalWordTilesAtCoordinates(2, 1);
+            Assert.IsTrue(VerticalBoardWord.GetWord().Equals(wordToLookFor));
 
-            char1.Y = 2;
-            Assert.IsTrue(!VerticalWord.BoardTilesAreConnected());
+            VerticalBoardWord = board.GetVerticalWordTilesAtCoordinates(3, 1);
+            Assert.IsTrue(VerticalBoardWord.GetWord().Equals(wordToLookFor));
 
-            char1.Y = 1;
-            char1.X = 1;
-            Assert.IsTrue(!VerticalWord.BoardTilesAreConnected());
+            VerticalBoardWord = board.GetVerticalWordTilesAtCoordinates(4, 1);
+            Assert.IsTrue(VerticalBoardWord.GetWord().Equals(wordToLookFor));
 
-            char1.X = 2;
-            char3.X = 5;
-            Assert.IsTrue(!VerticalWord.BoardTilesAreConnected());
+            VerticalBoardWord = board.GetVerticalWordTilesAtCoordinates(5, 1);
+            Assert.IsTrue(VerticalBoardWord.GetWord().Equals(wordToLookFor));
+
+            VerticalBoardWord = board.GetVerticalWordTilesAtCoordinates(6, 1);
+            Assert.IsTrue(VerticalBoardWord.GetWord().Equals(wordToLookFor));
         }
 
         [TestMethod]
-        public void TestGetAnchors()
+        public void GetAnchors_SetCharactersOnBoardTiles_AssertThatAnchorCountIsCorrectAfterEachPlacement()
         {
             Board board = new(rowCount: 5, columnCount: 5);
-            Assert.IsTrue(board.GetAnchors().Count() == 0);
+            Assert.IsTrue(board.GetAnchors().Count == 0);
 
             board.SetCharTile(1, 1, 'H');
-            Assert.IsTrue(board.GetAnchors().Count() == 2);
+            Assert.IsTrue(board.GetAnchors().Count == 2);
             board.SetCharTile(1, 1, null);
 
             board.SetCharTile(1, 2, 'H');
-            Assert.IsTrue(board.GetAnchors().Count() == 3);
+            Assert.IsTrue(board.GetAnchors().Count == 3);
             board.SetCharTile(1, 2, null);
 
             board.SetCharTile(2, 2, 'H');
-            Assert.IsTrue(board.GetAnchors().Count() == 4);
+            Assert.IsTrue(board.GetAnchors().Count == 4);
 
             board.SetCharTile(2, 3, 'E');
-            Assert.IsTrue(board.GetAnchors().Count() == 6);
+            Assert.IsTrue(board.GetAnchors().Count == 6);
 
             board.SetCharTile(3, 3, 'E');
-            Assert.IsTrue(board.GetAnchors().Count() == 7);
+            Assert.IsTrue(board.GetAnchors().Count == 7);
 
             board.SetCharTile(1, 3, 'O');
-            Assert.IsTrue(board.GetAnchors().Count() == 7);
+            Assert.IsTrue(board.GetAnchors().Count == 7);
 
             board.SetCharTile(4, 3, 'O');
-            Assert.IsTrue(board.GetAnchors().Count() == 9);
+            Assert.IsTrue(board.GetAnchors().Count == 9);
 
             board.SetCharTile(4, 2, 'Y');
-            Assert.IsTrue(board.GetAnchors().Count() == 10);
+            Assert.IsTrue(board.GetAnchors().Count == 10);
 
             board.SetCharTile(4, 1, 'D');
-            Assert.IsTrue(board.GetAnchors().Count() == 11);
-
-            Debug.WriteLine(board.PrintBoard());
+            Assert.IsTrue(board.GetAnchors().Count == 11);
         }
 
         //https://boardgames.stackexchange.com/questions/38366/latest-collins-scrabble-words-list-in-text-file
         [TestMethod]
         [Ignore]
-        public void GenerateDawgFromFile()
+        public void BoingDawg_Generate()
         {
             const string textFile = "boing_crosschecks.txt";
             //const string textFile = "englishWords.txt";
@@ -300,76 +382,14 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void TestDawgFile()
+        public void BoingDawg_ReadDawg_CountMustBe64()
         {
             Dawg<bool> boingDawg = Globals.BoingDawg;
             Assert.IsTrue(boingDawg.Count() == 64);
         }
 
         [TestMethod]
-        public void TestTransposition_1()
-        {
-            const int rowCount = 2;
-            const int columnCount = 5;
-            int[][] board = new int[rowCount][];
-            board[0] = new int[columnCount];
-            board[1] = new int[columnCount];
-
-            board[0][0] = 0;
-            board[0][1] = 1;
-            board[0][2] = 2;
-            board[0][3] = 3;
-            board[0][4] = 4;
-            board[1][0] = 5;
-            board[1][1] = 6;
-            board[1][2] = 7;
-            board[1][3] = 8;
-            board[1][4] = 9;
-
-            int[][] newBoard = new int[columnCount][];
-            for (int y = 0; y < columnCount; y++)
-            {
-                newBoard[y] = new int[rowCount];
-                for (int x = 0; x < rowCount; x++)
-                {
-                    newBoard[y][x] = board[x][y];
-                }
-            }
-        }
-
-        [TestMethod]
-        public void TestTransposition_2()
-        {
-            const int rowCount = 3;
-            const int columnCount = 3;
-            int[][] board = new int[rowCount][];
-            board[0] = new int[columnCount];
-            board[1] = new int[columnCount];
-            board[2] = new int[columnCount];
-
-            board[0][0] = 1;
-            board[0][1] = 2;
-            board[0][2] = 3;
-            board[1][0] = 4;
-            board[1][1] = 5;
-            board[1][2] = 6;
-            board[2][0] = 7;
-            board[2][1] = 8;
-            board[2][2] = 9;
-
-            int[][] newBoard = new int[columnCount][];
-            for (int y = 0; y < columnCount; y++)
-            {
-                newBoard[y] = new int[rowCount];
-                for (int x = 0; x < rowCount; x++)
-                {
-                    newBoard[y][x] = board[x][y];
-                }
-            }
-        }
-
-        [TestMethod]
-        public void Test_Transpose_Board()
+        public void Transpose_TransposingA2By3BoardTo3By2_AssertThatTheBoardTilesXsAndYsAndCharsAreAsExpected()
         {
             Board board = new(rowCount: 2, columnCount: 3);
             board.SetCharTile(1, 1, 'A');
@@ -386,7 +406,6 @@ namespace UnitTests
             Assert.IsTrue(boardTile.CharTile.Letter == 'B');
             Assert.IsTrue(boardTile.X == 1);
             Assert.IsTrue(boardTile.Y == 2);
-            Debug.WriteLine(board.PrintBoard());
 
             board.Transpose();
             Assert.IsTrue(board.RowCount == 3);
@@ -396,7 +415,6 @@ namespace UnitTests
             Assert.IsTrue(boardTile.X == 1);
             Assert.IsTrue(boardTile.Y == 2);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 1).Guid.Equals(guid));
-            Debug.WriteLine(board.PrintBoard());
 
             board.Transpose();
             Assert.IsTrue(board.RowCount == 2);
@@ -406,11 +424,10 @@ namespace UnitTests
             Assert.IsTrue(boardTile.X == 1);
             Assert.IsTrue(boardTile.Y == 2);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 2).Guid.Equals(guid));
-            Debug.WriteLine(board.PrintBoard());
         }
 
         [TestMethod]
-        public void Test_GetAnchorsAndTheirCrossChecks_BoingDawg()
+        public void GetCrossChecksForBoardTiles_CreateABoardWithWordBoingAndUsingBoingDawg_AssertThatCrossChecksAreCorrectBeforeAndAfterTransposition()
         {
             Board board = new(3, 7, Globals.BoingDawg);
             board.SetCharTile(2, 2, 'B');
@@ -420,9 +437,6 @@ namespace UnitTests
             board.SetCharTile(2, 6, 'G');
 
             BoardTileCollection boardAnchors = board.GetAnchors();
-
-            Debug.WriteLine(board.PrintBoard());
-
             Dictionary<BoardTile, HashSet<char>> crossChecksForNormalBoard = board.GetCrossChecksForBoardTiles(boardAnchors);
 
             Assert.IsTrue(crossChecksForNormalBoard.Count == 12);
@@ -450,12 +464,10 @@ namespace UnitTests
             Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 3).CharTile.Letter == 'O');
             Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 3).X == 2);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 3).Y == 3);
-
-            Debug.WriteLine(board.PrintBoard());
         }
 
         [TestMethod]
-        public void Test_GetAnchorsAndTheirCrossChecks_EnglishDawg()
+        public void GetCrossChecksForBoardTiles_CreateBoardWithEnglishDawg_AssertThatDawgIsWorkingAndThatCrossChecksAreCollected()
         {
             Board board = new(3, 7);
             board.SetCharTile(2, 2, 'B');
@@ -468,7 +480,7 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void Test_GetNumberOfNonAnchorTilesToTheLeftOfABoardTile()
+        public void GetNumberOfNonAnchorTilesToTheLeftOfABoardTile_PlaceWordLoveInTheMiddleOfTheRow_CountOfSaidTilesToTheLeftOfLIsZero()
         {
             Board board = new(1, 8);
             board.SetCharTile(1, 3, 'L');
@@ -478,16 +490,49 @@ namespace UnitTests
 
             int count = board.GetNumberOfNonAnchorTilesToTheLeftOfABoardTile(board.GetBoardTileAtCoordinates(1, 3), board.GetAnchors());
             Assert.IsTrue(count == 0);
+        }
+
+        [TestMethod]
+        public void GetNumberOfNonAnchorTilesToTheLeftOfABoardTile_PlaceWordLoveInTheMiddleOfTheRow_CountOfSaidTilesToTheLeftOfOIsOne()
+        {
+            Board board = new(1, 8);
+            board.SetCharTile(1, 3, 'L');
+            board.SetCharTile(1, 4, 'O');
+            board.SetCharTile(1, 5, 'V');
+            board.SetCharTile(1, 6, 'E');
 
             int count1 = board.GetNumberOfNonAnchorTilesToTheLeftOfABoardTile(board.GetBoardTileAtCoordinates(1, 2), board.GetAnchors());
             Assert.IsTrue(count1 == 1);
+        }
 
+        [TestMethod]
+        public void GetNumberOfNonAnchorTilesToTheLeftOfABoardTile_PlaceWordLoveInTheMiddleOfTheRow_CountOfSaidTilesToTheLeftOfTheLeftmostAnchorIsOne()
+        {
+            Board board = new(1, 8);
+            board.SetCharTile(1, 3, 'L');
+            board.SetCharTile(1, 4, 'O');
+            board.SetCharTile(1, 5, 'V');
+            board.SetCharTile(1, 6, 'E');
+
+            int count1 = board.GetNumberOfNonAnchorTilesToTheLeftOfABoardTile(board.GetBoardTileAtCoordinates(1, 2), board.GetAnchors());
+            Assert.IsTrue(count1 == 1);
+        }
+
+        [TestMethod]
+        public void GetNumberOfNonAnchorTilesToTheLeftOfABoardTile_PlaceWordLoveInTheMiddleOfTheRow_CountOfSaidTilesToTheLeftOfEIs3()
+        {
+            Board board = new(1, 8);
+            board.SetCharTile(1, 3, 'L');
+            board.SetCharTile(1, 4, 'O');
+            board.SetCharTile(1, 5, 'V');
+            board.SetCharTile(1, 6, 'E');
+            
             int count2 = board.GetNumberOfNonAnchorTilesToTheLeftOfABoardTile(board.GetBoardTileAtCoordinates(1, 6), board.GetAnchors());
             Assert.IsTrue(count2 == 3);
         }
 
         [TestMethod]
-        public void Test_GetWordsWithLoveInTheStart_1()
+        public void GetPossibleMoves_FindAllWordsStartingWithLove_BuildingWordsFromRightmostAnchor_CountMustBe60()
         {
             Board board = new(1, 15);
             board.SetCharTile(1, 2, 'L');
@@ -506,26 +551,7 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void Test_GetWordsWithLoveInTheStart_2()
-        {
-            Board board = new(1, 14);
-            board.SetCharTile(1, 1, 'L');
-            board.SetCharTile(1, 2, 'O');
-            board.SetCharTile(1, 3, 'V');
-            board.SetCharTile(1, 4, 'E');
-
-            BoardTile anchor = board.GetBoardTileAtCoordinates(1, 5);
-            List<char> englishAlphabet = Globals.GetEnglishCharactersArray().ToList();
-            List<char> playerRack = englishAlphabet;
-            playerRack.AddRange(englishAlphabet);
-            playerRack.AddRange(englishAlphabet);
-            playerRack.AddRange(englishAlphabet);
-            List<string> words = board.GetPossibleMoves(anchor, playerRack);
-            Assert.IsTrue(words.Count == 60);
-        }
-
-        [TestMethod]
-        public void Test_GetWordsWithLoveInTheMiddle()
+        public void GetPossibleMoves_FindAllWordsContainingLove_BuildingWordsFromLeftmostAnchor_CountMustBe89()
         {
             Board board = new(1, 19);
             board.SetCharTile(1, 6, 'L');
@@ -543,7 +569,7 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void Test_GetWordsWithLoveInTheEnd()
+        public void GetPossibleMoves_FindAllWordsEndingWithLove_BuildingWordsFromLeftmostAnchor_CountMustBe13()
         {
             Board board = new(1, 10);
             board.SetCharTile(1, 7, 'L');

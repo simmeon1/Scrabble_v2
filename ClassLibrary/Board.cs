@@ -10,7 +10,8 @@ namespace ClassLibrary
     [DebuggerDisplay("{PrintBoard()}")]
     public class Board
     {
-        private BoardTile[][] Tiles { get; set; }
+        public const string PrintBoard_Delimiter = "-------------------------------";
+        public BoardTile[][] Tiles { get; set; }
         public int RowCount { get; set; }
         public int ColumnCount { get; set; }
         public Dawg<bool> Dawg { get; set; }
@@ -73,16 +74,14 @@ namespace ClassLibrary
         public string PrintBoard()
         {
             BoardTileCollection anchors = GetAnchors();
-
-            const string delimiter = "-------------------------------";
-            StringBuilder sb = new StringBuilder(delimiter);
+            StringBuilder sb = new StringBuilder(PrintBoard_Delimiter);
             foreach (BoardTile[] rows in Tiles)
             {
                 if (sb.Length != 0) sb.Append('\n');
                 foreach (BoardTile tile in rows) sb.Append(anchors.Contains(tile) ? "[=]" : $"[{tile.PrintChar()}]");
             }
             sb.Append('\n');
-            sb.Append(delimiter);
+            sb.Append(PrintBoard_Delimiter);
             return sb.ToString();
         }
 
