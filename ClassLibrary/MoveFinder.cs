@@ -90,7 +90,6 @@ namespace ClassLibrary
                     DawgNode nextNode = GetDawgNode(partialWordPlusEdge);
                     BoardTile nextBoardTile = Board.GetBoardTileAtCoordinates(boardTile.X, boardTile.Y + 1);
                     if (nextBoardTile != null) nextBoardTile.CrossChecks = Board.GetCrossChecksForBoardTile(nextBoardTile);
-                    HashSet<char> nextBoardTileCrossChecks = Board.GetCrossChecksForBoardTile(nextBoardTile);
                     ExtendRight(nextNode, nextBoardTile);
                     PlayerRack.Add(rackChar);
                 }
