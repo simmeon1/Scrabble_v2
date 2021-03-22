@@ -536,11 +536,27 @@ namespace UnitTests
             BoardTile anchor = board.GetBoardTileAtCoordinates(1, 5);
             List<char> englishAlphabet = Globals.GetEnglishCharactersArray().ToList();
             List<char> playerRack = englishAlphabet;
-            //List<char> playerRack = "XDRSUNGLY".ToList();
             playerRack.AddRange(englishAlphabet);
             playerRack.AddRange(englishAlphabet);
             List<string> words = board.GetPossibleMoves(anchor, playerRack);
             Assert.IsTrue(words.Count == 89);
+        }
+
+        [TestMethod]
+        public void Test_GetWordsWithLoveInTheEnd()
+        {
+            Board board = new(1, 10);
+            board.SetCharTile(1, 7, 'L');
+            board.SetCharTile(1, 8, 'O');
+            board.SetCharTile(1, 9, 'V');
+            board.SetCharTile(1, 10, 'E');
+
+            BoardTile anchor = board.GetBoardTileAtCoordinates(1, 6);
+            List<char> englishAlphabet = Globals.GetEnglishCharactersArray().ToList();
+            List<char> playerRack = englishAlphabet;
+            playerRack.AddRange(englishAlphabet);
+            List<string> words = board.GetPossibleMoves(anchor, playerRack);
+            Assert.IsTrue(words.Count == 13);
         }
     }
 }
