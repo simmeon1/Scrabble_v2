@@ -12,6 +12,7 @@ namespace ClassLibrary
         private List<string> ValidWords { get; set; }
         private List<char> PlayerRack { get; set; }
         private BoardTile StartingBoardTile { get; set; }
+        private bool LeftPartIsAlreadyProvided { get; set; }
 
         public MoveFinder(Board board)
         {
@@ -24,14 +25,15 @@ namespace ClassLibrary
             PlayerRack = playerRack;
             StartingBoardTile = anchor;
 
-            HorizontalBoardWord horizontalBoardWordTiles = Board.GetHorizontalWordTilesAtCoordinates(StartingBoardTile.X, StartingBoardTile.Y);
-            string word = horizontalBoardWordTiles?.GetWord() ?? "";
-            DawgNode node = GetDawgNode(word);
+            HorizontalBoardWord wordToTheLeftOfAnchor = Board.GetHorizontalWordTilesAtCoordinates(StartingBoardTile.X, StartingBoardTile.Y - 1);
+            string partialWord = wordToTheLeftOfAnchor?.GetWord() ?? "";
+            LeftPartIsAlreadyProvided = partialWord.Length > 0;
 
             StartingBoardTile.CrossChecks = Board.GetCrossChecksForBoardTile(StartingBoardTile);
 
             BoardTileCollection boardAnchors = Board.GetAnchors();
 
+            DawgNode node = GetDawgNode(partialWord);
             int limit = Board.GetNumberOfNonAnchorTilesToTheLeftOfABoardTile(StartingBoardTile, boardAnchors);
             LeftPart(node, limit, anchor);
             return ValidWords;
@@ -55,7 +57,7 @@ namespace ClassLibrary
         private void LeftPart(DawgNode node, int limit, BoardTile anchor)
         {
             ExtendRight(node, anchor);
-            if (limit <= 0) return;
+            if (LeftPartIsAlreadyProvided || limit <= 0) return;
             foreach (char edge in node.Edges)
             {
                 if (!PlayerRack.Contains(edge)) continue;

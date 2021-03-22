@@ -487,6 +487,44 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Test_GetWordsWithLoveInTheStart_1()
+        {
+            Board board = new(1, 15);
+            board.SetCharTile(1, 2, 'L');
+            board.SetCharTile(1, 3, 'O');
+            board.SetCharTile(1, 4, 'V');
+            board.SetCharTile(1, 5, 'E');
+
+            BoardTile anchor = board.GetBoardTileAtCoordinates(1, 6);
+            List<char> englishAlphabet = Globals.GetEnglishCharactersArray().ToList();
+            List<char> playerRack = englishAlphabet;
+            playerRack.AddRange(englishAlphabet);
+            playerRack.AddRange(englishAlphabet);
+            playerRack.AddRange(englishAlphabet);
+            List<string> words = board.GetPossibleMoves(anchor, playerRack);
+            Assert.IsTrue(words.Count == 60);
+        }
+
+        [TestMethod]
+        public void Test_GetWordsWithLoveInTheStart_2()
+        {
+            Board board = new(1, 14);
+            board.SetCharTile(1, 1, 'L');
+            board.SetCharTile(1, 2, 'O');
+            board.SetCharTile(1, 3, 'V');
+            board.SetCharTile(1, 4, 'E');
+
+            BoardTile anchor = board.GetBoardTileAtCoordinates(1, 5);
+            List<char> englishAlphabet = Globals.GetEnglishCharactersArray().ToList();
+            List<char> playerRack = englishAlphabet;
+            playerRack.AddRange(englishAlphabet);
+            playerRack.AddRange(englishAlphabet);
+            playerRack.AddRange(englishAlphabet);
+            List<string> words = board.GetPossibleMoves(anchor, playerRack);
+            Assert.IsTrue(words.Count == 60);
+        }
+
+        [TestMethod]
         public void Test_GetWordsWithLoveInTheMiddle()
         {
             Board board = new(1, 19);
