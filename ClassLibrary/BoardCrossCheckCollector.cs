@@ -4,26 +4,33 @@ using System.Linq;
 
 namespace ClassLibrary
 {
-    public class CrossCheckCollector
+    public class BoardCrossCheckCollector
     {
         public Dawg<bool> Dawg { get; set; }
         public Board Board { get; set; }
-        public BoardTileCollection BoardTileCollection { get; set; }
-        public Dictionary<BoardTile, HashSet<char>> GetCrossChecksForBoardTiles(Board board, BoardTileCollection boardTileCollection)
+        public BoardCrossCheckCollector(Board board, Dawg<bool> dawg)
         {
+            Dawg = dawg;
             Board = board;
-            BoardTileCollection = boardTileCollection;
-            Dawg = board.Dawg;
-            return GetCrossChecksForBoardTiles();
         }
 
-        private Dictionary<BoardTile, HashSet<char>> GetCrossChecksForBoardTiles()
+
+        public HashSet<char> GetCrossChecksForBoardTile(BoardTile boardTile)
         {
+            if (boardTile == null) return null;
+            BoardTileCollection boardTileCollection = new(new List<BoardTile>() { boardTile });
+            Dictionary<BoardTile, HashSet<char>> crossChecksForBoardTileCollection = GetCrossChecksForBoardTiles(boardTileCollection);
+            return crossChecksForBoardTileCollection.ContainsKey(boardTile) ? crossChecksForBoardTileCollection[boardTile] : null;
+        }
+
+        public Dictionary<BoardTile, HashSet<char>> GetCrossChecksForBoardTiles(BoardTileCollection boardTileCollection)
+        {
+            BoardWordRetriever boardWordRetriever = new BoardWordRetriever(Board);
             char[] charsFromAlphabet = Globals.GetEnglishCharactersArray();
             HashSet<char> charsFromAlphabetHashSet = charsFromAlphabet.ToHashSet();
 
             Dictionary<BoardTile, HashSet<char>> tilesAndTheirCrossChecks = new();
-            foreach (BoardTile boardTile in BoardTileCollection)
+            foreach (BoardTile boardTile in boardTileCollection)
             {
                 if (boardTile == null)
                 {
@@ -36,16 +43,16 @@ namespace ClassLibrary
                 tilesAndTheirCrossChecks.Add(boardTile, new HashSet<char>());
                 foreach (char ch in charsFromAlphabet)
                 {
-                    Board.SetCharTile(boardTile.X, boardTile.Y, ch);
-                    VerticalBoardWord verticalWord = Board.GetVerticalWordTilesAtCoordinates(boardTile.X, boardTile.Y);
+                    Board.PlaceCharTile(boardTile.X, boardTile.Y, ch);
+                    VerticalBoardWord verticalWord = boardWordRetriever.GetVerticalWordTilesAtCoordinates(boardTile.X, boardTile.Y);
                     if (verticalWord.Count < 2)
                     {
                         tilesAndTheirCrossChecks[boardTile] = charsFromAlphabetHashSet;
-                        Board.SetCharTile(boardTile.X, boardTile.Y, null);
+                        Board.PlaceCharTile(boardTile.X, boardTile.Y, null);
                         break;
                     }
                     if (Dawg[verticalWord.GetWord()] == true) tilesAndTheirCrossChecks[boardTile].Add(ch);
-                    Board.SetCharTile(boardTile.X, boardTile.Y, null);
+                    Board.RemoveCharTile(boardTile.X, boardTile.Y);
                 }
             }
             return tilesAndTheirCrossChecks;

@@ -6,17 +6,21 @@ using System.Linq;
 
 namespace ClassLibrary
 {
-    public class MoveFinder
+    public class BoardMoveFinder
     {
         private Board Board { get; set; }
+        private Dawg<bool> Dawg { get; set; }
         private List<string> ValidWords { get; set; }
         private List<char> PlayerRack { get; set; }
         private BoardTile StartingBoardTile { get; set; }
         private bool LeftPartIsAlreadyProvided { get; set; }
+        public BoardCrossCheckCollector BoardCrossCheckCollector { get; set; }
 
-        public MoveFinder(Board board)
+        public BoardMoveFinder(Board board, Dawg<bool> dawg)
         {
             Board = board;
+            Dawg = dawg;
+            BoardCrossCheckCollector = new BoardCrossCheckCollector(board, dawg);
         }
 
         public List<string> GetPossibleMoves(BoardTile anchor, List<char> playerRack)
@@ -25,16 +29,19 @@ namespace ClassLibrary
             PlayerRack = playerRack;
             StartingBoardTile = anchor;
 
-            HorizontalBoardWord wordToTheLeftOfAnchor = Board.GetHorizontalWordTilesAtCoordinates(StartingBoardTile.X, StartingBoardTile.Y - 1);
+            BoardWordRetriever boardWordRetriever = new(Board);
+            HorizontalBoardWord wordToTheLeftOfAnchor = boardWordRetriever.GetHorizontalWordTilesAtCoordinates(StartingBoardTile.X, StartingBoardTile.Y - 1);
             string partialWord = wordToTheLeftOfAnchor?.GetWord() ?? "";
             LeftPartIsAlreadyProvided = partialWord.Length > 0;
 
-            StartingBoardTile.CrossChecks = Board.GetCrossChecksForBoardTile(StartingBoardTile);
+            StartingBoardTile.CrossChecks = BoardCrossCheckCollector.GetCrossChecksForBoardTile(StartingBoardTile);
 
-            BoardTileCollection boardAnchors = Board.GetAnchors();
+            BoardAnchorCollector boardAnchorCollector = new();
+            BoardTileCollection boardAnchors = boardAnchorCollector.GetAnchors(Board);
 
             DawgNode node = GetDawgNode(partialWord);
-            int limit = Board.GetNumberOfNonAnchorTilesToTheLeftOfABoardTile(StartingBoardTile, boardAnchors);
+            BoardNonAnchorTileCounter boardNonAnchorTileCounter = new BoardNonAnchorTileCounter(Board);
+            int limit = boardNonAnchorTileCounter.GetNumberOfNonAnchorTilesToTheLeftOfABoardTile(StartingBoardTile, boardAnchors);
             LeftPart(node, limit, anchor);
             return ValidWords;
         }
@@ -43,8 +50,7 @@ namespace ClassLibrary
         {
             if (word.IsNullOrEmpty()) return new DawgNode(word, Globals.GetEnglishCharactersArray().ToHashSet());
 
-            Dawg<bool> dawg = Board.Dawg;
-            IEnumerable<KeyValuePair<string, bool>> wordsContainingPrefix = dawg.MatchPrefix(word);
+            IEnumerable<KeyValuePair<string, bool>> wordsContainingPrefix = Dawg.MatchPrefix(word);
             HashSet<char> lettersThatCanFollowPrefix = new();
             foreach (KeyValuePair<string, bool> wordContainingPrefix_Pair in wordsContainingPrefix)
             {
@@ -89,7 +95,7 @@ namespace ClassLibrary
                     string partialWordPlusEdge = partialWord + rackChar.ToString();
                     DawgNode nextNode = GetDawgNode(partialWordPlusEdge);
                     BoardTile nextBoardTile = Board.GetBoardTileAtCoordinates(boardTile.X, boardTile.Y + 1);
-                    if (nextBoardTile != null) nextBoardTile.CrossChecks = Board.GetCrossChecksForBoardTile(nextBoardTile);
+                    if (nextBoardTile != null) nextBoardTile.CrossChecks = BoardCrossCheckCollector.GetCrossChecksForBoardTile(nextBoardTile);
                     ExtendRight(nextNode, nextBoardTile);
                     PlayerRack.Add(rackChar);
                 }
@@ -102,8 +108,8 @@ namespace ClassLibrary
                 string partialWordPlusEdge = partialWord + charOnBoardTile.ToString();
                 DawgNode nextNode = GetDawgNode(partialWordPlusEdge);
                 BoardTile nextBoardTile = Board.GetBoardTileAtCoordinates(boardTile.X, boardTile.Y + 1);
-                HashSet<char> nextBoardTileCrossChecks = Board.GetCrossChecksForBoardTile(nextBoardTile);
-                if (nextBoardTile != null) nextBoardTile.CrossChecks = Board.GetCrossChecksForBoardTile(nextBoardTile);
+                HashSet<char> nextBoardTileCrossChecks = BoardCrossCheckCollector.GetCrossChecksForBoardTile(nextBoardTile);
+                if (nextBoardTile != null) nextBoardTile.CrossChecks = BoardCrossCheckCollector.GetCrossChecksForBoardTile(nextBoardTile);
                 ExtendRight(nextNode, nextBoardTile);
             }
         }

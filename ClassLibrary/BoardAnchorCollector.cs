@@ -2,12 +2,11 @@
 
 namespace ClassLibrary
 {
-    public class AnchorCollector
+    public class BoardAnchorCollector
     {
+        private Board Board { get; set; }
         private List<BoardTile> Anchors { get; set; }
         private HashSet<BoardTile> AddedAnchors { get; set; }
-        private Board Board { get; set; }
-
         public BoardTileCollection GetAnchors(Board board)
         {
             Board = board;
