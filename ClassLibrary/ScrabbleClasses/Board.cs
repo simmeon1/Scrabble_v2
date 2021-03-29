@@ -7,7 +7,6 @@ using DawgSharp;
 
 namespace ClassLibrary
 {
-    [DebuggerDisplay("{PrintBoard()}")]
     public class Board
     {
         public BoardTile[][] Tiles { get; set; }
@@ -34,7 +33,7 @@ namespace ClassLibrary
         {
             if (!CoordinatesExist(X, Y)) return null;
             BoardTile boardTile = GetBoardTileAtCoordinates(X, Y);
-            boardTile.CharTile = c;
+            boardTile.PlaceCharTile(c);
             return c;
         }
 

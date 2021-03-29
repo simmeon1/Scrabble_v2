@@ -14,6 +14,7 @@ namespace ClassLibrary
         private List<char> PlayerRack { get; set; }
         private BoardTile StartingBoardTile { get; set; }
         private bool LeftPartIsAlreadyProvided { get; set; }
+        private Dictionary<BoardTile, HashSet<char>> BoardTilesAndTheirCrossChecks { get; set; }
         public BoardCrossCheckCollector BoardCrossCheckCollector { get; set; }
 
         public BoardMoveFinder(Board board, Dawg<bool> dawg)
@@ -28,13 +29,14 @@ namespace ClassLibrary
             ValidWords = new List<string>();
             PlayerRack = playerRack;
             StartingBoardTile = anchor;
+            BoardTilesAndTheirCrossChecks = new Dictionary<BoardTile, HashSet<char>>();
 
             BoardWordRetriever boardWordRetriever = new(Board);
             HorizontalBoardWord wordToTheLeftOfAnchor = boardWordRetriever.GetHorizontalWordTilesAtCoordinates(StartingBoardTile.X, StartingBoardTile.Y - 1);
             string partialWord = wordToTheLeftOfAnchor?.GetWord() ?? "";
             LeftPartIsAlreadyProvided = partialWord.Length > 0;
 
-            StartingBoardTile.CrossChecks = BoardCrossCheckCollector.GetCrossChecksForBoardTile(StartingBoardTile);
+            BoardTilesAndTheirCrossChecks.Add(StartingBoardTile, BoardCrossCheckCollector.GetCrossChecksForBoardTile(StartingBoardTile));
 
             BoardAnchorCollector boardAnchorCollector = new();
             BoardTileCollection boardAnchors = boardAnchorCollector.GetAnchors(Board);
@@ -87,7 +89,7 @@ namespace ClassLibrary
                 if (boardTile != StartingBoardTile) AddWordToValidWordsIfValid(partialWord);
                 foreach (char edge in node.Edges)
                 {
-                    HashSet<char> boardTileCrossChecks = boardTile.CrossChecks;
+                    HashSet<char> boardTileCrossChecks = GetBoardTileCrossChecks(boardTile);
                     if (!PlayerRack.Contains(edge) || (boardTileCrossChecks != null && !boardTileCrossChecks.Contains(edge))) continue;
 
                     char rackChar = PlayerRack.FirstOrDefault(t => t == edge);
@@ -95,7 +97,7 @@ namespace ClassLibrary
                     string partialWordPlusEdge = partialWord + rackChar.ToString();
                     DawgNode nextNode = GetDawgNode(partialWordPlusEdge);
                     BoardTile nextBoardTile = Board.GetBoardTileAtCoordinates(boardTile.X, boardTile.Y + 1);
-                    if (nextBoardTile != null) nextBoardTile.CrossChecks = BoardCrossCheckCollector.GetCrossChecksForBoardTile(nextBoardTile);
+                    SetBoardTileCrossChecks(nextBoardTile);
                     ExtendRight(nextNode, nextBoardTile);
                     PlayerRack.Add(rackChar);
                 }
@@ -108,10 +110,28 @@ namespace ClassLibrary
                 string partialWordPlusEdge = partialWord + charOnBoardTile.ToString();
                 DawgNode nextNode = GetDawgNode(partialWordPlusEdge);
                 BoardTile nextBoardTile = Board.GetBoardTileAtCoordinates(boardTile.X, boardTile.Y + 1);
-                HashSet<char> nextBoardTileCrossChecks = BoardCrossCheckCollector.GetCrossChecksForBoardTile(nextBoardTile);
-                if (nextBoardTile != null) nextBoardTile.CrossChecks = BoardCrossCheckCollector.GetCrossChecksForBoardTile(nextBoardTile);
+                SetBoardTileCrossChecks(nextBoardTile);
                 ExtendRight(nextNode, nextBoardTile);
             }
+        }
+
+        private void SetBoardTileCrossChecks(BoardTile boardTile)
+        {
+            if (boardTile == null) return;
+
+            HashSet<char> crossChecks = BoardCrossCheckCollector.GetCrossChecksForBoardTile(boardTile);
+            if (BoardTilesAndTheirCrossChecks.ContainsKey(boardTile))
+            {
+                BoardTilesAndTheirCrossChecks[boardTile] = crossChecks;
+            } else
+            {
+                BoardTilesAndTheirCrossChecks.Add(boardTile, crossChecks);
+            }
+        }
+
+        private HashSet<char> GetBoardTileCrossChecks(BoardTile boardTile)
+        {
+            return BoardTilesAndTheirCrossChecks.ContainsKey(boardTile) ? BoardTilesAndTheirCrossChecks[boardTile] : new HashSet<char>();
         }
 
         private void AddWordToValidWordsIfValid(string partialWord)

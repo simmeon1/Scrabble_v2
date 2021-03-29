@@ -9,8 +9,7 @@ namespace ClassLibrary
     [DebuggerDisplay("{GetWord()}")]
     public abstract class BoardWord : BoardTileCollection
     {
-        protected abstract int GetCoordinateThatIsConsistentInTheWord(BoardTile boardTile);
-        protected abstract int GetCoordinateThatIsIncrementalInTheWord(BoardTile boardTile);
+        protected abstract BoardWordDirectionEnum Direction { get; }
         protected BoardWord(List<BoardTile> boardTiles = null) : base(boardTiles)
         {
         }
@@ -20,6 +19,13 @@ namespace ClassLibrary
             StringBuilder sb = new();
             foreach (BoardTile boardTile in BoardTiles) sb.Append(boardTile.PrintChar());
             return sb.ToString();
+        }
+
+        protected enum BoardWordDirectionEnum
+        {
+            Unknown,
+            Horizontal,
+            Vertical
         }
     }
 }

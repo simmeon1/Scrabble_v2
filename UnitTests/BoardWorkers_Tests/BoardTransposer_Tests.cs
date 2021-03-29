@@ -44,5 +44,28 @@ namespace UnitTests
             Assert.IsTrue(boardTile.Y == 2);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 2).Guid.Equals(guid));
         }
+
+        [TestMethod]
+        public void Transpose_TransposeATestBoard_AssertUntransposedXsAndUntransposedYsAreCorrect()
+        {
+            Board board = new(rowCount: 5, columnCount: 5);
+            board.PlaceCharTile(2, 3, 'A');
+            board.PlaceCharTile(2, 4, 'B');
+
+            BoardTransposer.Transpose(board);
+
+            BoardTile boardTileA = board.GetBoardTileAtCoordinates(3, 2);
+
+            Assert.IsTrue(boardTileA.X == 3);
+            Assert.IsTrue(boardTileA.UntransposedX == 2);
+            Assert.IsTrue(boardTileA.Y == 2);
+            Assert.IsTrue(boardTileA.UntransposedY == 3);
+
+            BoardTile boardTileB = board.GetBoardTileAtCoordinates(4, 2);
+            Assert.IsTrue(boardTileB.X == 4);
+            Assert.IsTrue(boardTileB.UntransposedX == 2);
+            Assert.IsTrue(boardTileB.Y == 2);
+            Assert.IsTrue(boardTileB.UntransposedY == 4);
+        }
     }
 }

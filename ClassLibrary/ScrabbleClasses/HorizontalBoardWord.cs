@@ -5,18 +5,9 @@ namespace ClassLibrary
 {
     public class HorizontalBoardWord : BoardWord
     {
+        protected override BoardWordDirectionEnum Direction => BoardWordDirectionEnum.Horizontal;
         public HorizontalBoardWord(List<BoardTile> boardTiles = null) : base(boardTiles)
         {
-        }
-
-        protected override int GetCoordinateThatIsConsistentInTheWord(BoardTile boardTile)
-        {
-            return boardTile.X;
-        }
-
-        protected override int GetCoordinateThatIsIncrementalInTheWord(BoardTile boardTile)
-        {
-            return boardTile.Y;
         }
     }
 }
