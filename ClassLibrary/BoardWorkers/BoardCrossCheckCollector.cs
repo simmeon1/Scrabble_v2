@@ -35,7 +35,9 @@ namespace ClassLibrary
                 if (boardTile.CharTile != null) continue;
 
                 tilesAndTheirCrossChecks.Add(boardTile, new HashSet<char>());
-                if (!boardWordRetriever.BoardTileIsVerticallyConnectedToCharTiles(boardTile.X, boardTile.Y))
+
+                BoardTileVerticalWordConnectionChecker verticallityChecker = new(Board);
+                if (!verticallityChecker.BoardTileIsVerticallyPartOfAWord(boardTile.X, boardTile.Y))
                 {
                     tilesAndTheirCrossChecks[boardTile] = charsFromAlphabetHashSet;
                     continue;

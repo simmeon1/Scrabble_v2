@@ -1,13 +1,5 @@
 using ClassLibrary;
-using DawgSharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace UnitTests
 {
@@ -200,81 +192,6 @@ namespace UnitTests
 
             VerticalBoardWord = boardWordRetriever.GetVerticalWordTilesAtCoordinates(6, 1);
             Assert.IsTrue(VerticalBoardWord.GetWord().Equals(wordToLookFor));
-        }
-
-        [TestMethod]
-        public void BoardTileIsVerticallyConnectedToCharTiles_TestOnNonEmptyBoardTile_ResultIsTrue()
-        {
-            int x = 2;
-            int y = 1;
-            Board board = new(rowCount: 3, columnCount: 1);
-            board.PlaceCharTile(X: 2, Y: 1, c: 'H');
-
-            BoardWordRetriever boardWordRetriever = new(board);
-            Assert.IsTrue(boardWordRetriever.BoardTileIsVerticallyConnectedToCharTiles(x, y) == true);
-        }
-
-        [TestMethod]
-        public void BoardTileIsVerticallyConnectedToCharTiles_TestOnEmptyBoardTile_NoNeighboringVerticalCharTiles_ResultIsFalse()
-        {
-            int x = 2;
-            int y = 1;
-            Board board = new(rowCount: 3, columnCount: 1);
-            board.PlaceCharTile(X: 2, Y: 1, null);
-
-            BoardWordRetriever boardWordRetriever = new(board);
-            Assert.IsTrue(boardWordRetriever.BoardTileIsVerticallyConnectedToCharTiles(x, y) == false);
-        }
-
-        [TestMethod]
-        public void BoardTileIsVerticallyConnectedToCharTiles_TestOnEmptyBoardTile_HasUpperCharTileNeighbor_ResultIsTrue()
-        {
-            int x = 2;
-            int y = 1;
-            Board board = new(rowCount: 3, columnCount: 1);
-            board.PlaceCharTile(X: 2, Y: 1, null);
-            board.PlaceCharTile(X: 1, Y: 1, 'H');
-
-            BoardWordRetriever boardWordRetriever = new(board);
-            Assert.IsTrue(boardWordRetriever.BoardTileIsVerticallyConnectedToCharTiles(x, y) == true);
-        }
-
-        [TestMethod]
-        public void BoardTileIsVerticallyConnectedToCharTiles_TestOnEmptyBoardTile_HasLowerCharTileNeighbor_ResultIsTrue()
-        {
-            int x = 2;
-            int y = 1;
-            Board board = new(rowCount: 3, columnCount: 1);
-            board.PlaceCharTile(X: 2, Y: 1, null);
-            board.PlaceCharTile(X: 3, Y: 1, 'H');
-
-            BoardWordRetriever boardWordRetriever = new(board);
-            Assert.IsTrue(boardWordRetriever.BoardTileIsVerticallyConnectedToCharTiles(x, y) == true);
-        }
-        
-        [TestMethod]
-        public void BoardTileIsVerticallyConnectedToCharTiles_TestOnEmptyBoardTile_HasUpperAndLowerCharTileNeighbor_ResultIsTrue()
-        {
-            int x = 2;
-            int y = 1;
-            Board board = new(rowCount: 3, columnCount: 1);
-            board.PlaceCharTile(X: 2, Y: 1, null);
-            board.PlaceCharTile(X: 3, Y: 1, 'H');
-            board.PlaceCharTile(X: 1, Y: 1, 'H');
-
-            BoardWordRetriever boardWordRetriever = new(board);
-            Assert.IsTrue(boardWordRetriever.BoardTileIsVerticallyConnectedToCharTiles(x, y) == true);
-        }
-        
-        [TestMethod]
-        public void BoardTileIsVerticallyConnectedToCharTiles_TestOnEmptyBoardTile_OnlyOneRowAndColumn_ResultIsFalse()
-        {
-            int x = 1;
-            int y = 1;
-            Board board = new(rowCount: 1, columnCount: 1);
-
-            BoardWordRetriever boardWordRetriever = new(board);
-            Assert.IsTrue(boardWordRetriever.BoardTileIsVerticallyConnectedToCharTiles(x, y) == false);
         }
     }
 }

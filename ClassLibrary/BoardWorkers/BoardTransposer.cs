@@ -2,7 +2,6 @@
 
 namespace ClassLibrary
 {
-    [DebuggerDisplay("{PrintBoard()}")]
     public class BoardTransposer
     {
         public static void Transpose(Board board)

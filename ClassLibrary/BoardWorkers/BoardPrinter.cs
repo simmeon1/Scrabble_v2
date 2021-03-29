@@ -3,7 +3,6 @@ using System.Text;
 
 namespace ClassLibrary
 {
-    [DebuggerDisplay("{PrintBoard()}")]
     public class BoardPrinter
     {
         public const string PrintBoard_Delimiter = "-------------------------------";

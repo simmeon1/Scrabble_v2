@@ -2,7 +2,6 @@
 
 namespace ClassLibrary
 {
-    [DebuggerDisplay("{PrintBoard()}")]
     public class BoardNonAnchorTileCounter
     {
         public Board Board { get; set; }

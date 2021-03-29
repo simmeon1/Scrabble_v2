@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace ClassLibrary
 {
-    [DebuggerDisplay("{PrintBoard()}")]
     public class BoardWordRetriever
     {
         public Board Board { get; set; }
@@ -66,21 +65,6 @@ namespace ClassLibrary
                 i++;
             }
             return new VerticalBoardWord(boardTilesWithCharTiles);
-        }
-
-        public bool BoardTileIsVerticallyConnectedToCharTiles(int X, int Y)
-        {
-            BoardTile boardTile = Board.GetBoardTileAtCoordinates(X, Y);
-            if (boardTile == null) return false;
-            if (boardTile.CharTile != null) return true;
-
-            BoardTile upperBoardTile = Board.GetBoardTileAtCoordinates(X - 1, Y);
-            if (upperBoardTile != null && upperBoardTile.CharTile != null) return true;
-
-            BoardTile lowerBoardTile = Board.GetBoardTileAtCoordinates(X + 1, Y);
-            if (lowerBoardTile != null && lowerBoardTile.CharTile != null) return true;
-
-            return false;
         }
     }
 }
