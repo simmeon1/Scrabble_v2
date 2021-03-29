@@ -14,7 +14,6 @@ namespace ClassLibrary
             Board = board;
         }
 
-
         public HashSet<char> GetCrossChecksForBoardTile(BoardTile boardTile)
         {
             if (boardTile == null) return null;
@@ -25,32 +24,27 @@ namespace ClassLibrary
 
         public Dictionary<BoardTile, HashSet<char>> GetCrossChecksForBoardTiles(BoardTileCollection boardTileCollection)
         {
-            BoardWordRetriever boardWordRetriever = new BoardWordRetriever(Board);
+            BoardWordRetriever boardWordRetriever = new(Board);
             char[] charsFromAlphabet = Globals.GetEnglishCharactersArray();
             HashSet<char> charsFromAlphabetHashSet = charsFromAlphabet.ToHashSet();
 
             Dictionary<BoardTile, HashSet<char>> tilesAndTheirCrossChecks = new();
             foreach (BoardTile boardTile in boardTileCollection)
             {
-                if (boardTile == null)
-                {
-                    tilesAndTheirCrossChecks.Add(boardTile, charsFromAlphabetHashSet);
-                    continue;
-                }
 
                 if (boardTile.CharTile != null) continue;
 
                 tilesAndTheirCrossChecks.Add(boardTile, new HashSet<char>());
+                if (!boardWordRetriever.BoardTileIsVerticallyConnectedToCharTiles(boardTile.X, boardTile.Y))
+                {
+                    tilesAndTheirCrossChecks[boardTile] = charsFromAlphabetHashSet;
+                    continue;
+                }
+
                 foreach (char ch in charsFromAlphabet)
                 {
                     Board.PlaceCharTile(boardTile.X, boardTile.Y, ch);
                     VerticalBoardWord verticalWord = boardWordRetriever.GetVerticalWordTilesAtCoordinates(boardTile.X, boardTile.Y);
-                    if (verticalWord.Count < 2)
-                    {
-                        tilesAndTheirCrossChecks[boardTile] = charsFromAlphabetHashSet;
-                        Board.PlaceCharTile(boardTile.X, boardTile.Y, null);
-                        break;
-                    }
                     if (Dawg[verticalWord.GetWord()] == true) tilesAndTheirCrossChecks[boardTile].Add(ch);
                     Board.RemoveCharTile(boardTile.X, boardTile.Y);
                 }
