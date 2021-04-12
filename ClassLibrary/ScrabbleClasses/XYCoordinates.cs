@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ClassLibrary
 {
@@ -11,6 +13,11 @@ namespace ClassLibrary
         {
             X = x;
             Y = y;
+        }
+
+        public bool HasSameCoordinatesAs(XYCoordinates otherCoordinates)
+        {
+            return otherCoordinates != null && X == otherCoordinates.X && Y == otherCoordinates.Y;
         }
     }
 }
