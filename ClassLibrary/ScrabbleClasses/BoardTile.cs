@@ -9,17 +9,13 @@ namespace ClassLibrary
     {
         public CharTile CharTile { get; private set; }
         public int X { get; set; }
-        public int UntransposedX { get; set; }
         public int Y { get; set; }
-        public int UntransposedY { get; set; }
         public Guid Guid { get; } = Guid.NewGuid();
         public BoardTile(int x, int y, CharTile charTile = null)
         {
             CharTile = charTile;
             X = x;
-            UntransposedX = x;
             Y = y;
-            UntransposedY = y;
         }
 
         public char PrintChar()

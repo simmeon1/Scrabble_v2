@@ -26,7 +26,10 @@ namespace UnitTests
             Assert.IsTrue(boardTile.X == 1);
             Assert.IsTrue(boardTile.Y == 2);
 
-            BoardTransposer.Transpose(board);
+            BoardTransposer transposer = new(board);
+            Assert.IsTrue(!transposer.BoardIsTransposed);
+
+            transposer.TransposeBoard();
             Assert.IsTrue(board.RowCount == 3);
             Assert.IsTrue(board.ColumnCount == 2);
             boardTile = board.GetBoardTileAtCoordinates(1, 2);
@@ -34,8 +37,9 @@ namespace UnitTests
             Assert.IsTrue(boardTile.X == 1);
             Assert.IsTrue(boardTile.Y == 2);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 1).Guid.Equals(guid));
+            Assert.IsTrue(transposer.BoardIsTransposed);
 
-            BoardTransposer.Transpose(board);
+            transposer.TransposeBoard();
             Assert.IsTrue(board.RowCount == 2);
             Assert.IsTrue(board.ColumnCount == 3);
             boardTile = board.GetBoardTileAtCoordinates(1, 2);
@@ -43,6 +47,7 @@ namespace UnitTests
             Assert.IsTrue(boardTile.X == 1);
             Assert.IsTrue(boardTile.Y == 2);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(1, 2).Guid.Equals(guid));
+            Assert.IsTrue(!transposer.BoardIsTransposed);
         }
 
         [TestMethod]
@@ -52,20 +57,21 @@ namespace UnitTests
             board.PlaceCharTile(2, 3, 'A');
             board.PlaceCharTile(2, 4, 'B');
 
-            BoardTransposer.Transpose(board);
+            BoardTransposer transposer = new(board);
+            transposer.TransposeBoard();
 
             BoardTile boardTileA = board.GetBoardTileAtCoordinates(3, 2);
 
             Assert.IsTrue(boardTileA.X == 3);
-            Assert.IsTrue(boardTileA.UntransposedX == 2);
+            Assert.IsTrue(transposer.BoardTilesAndTheirOriginalCoordinates[boardTileA].X == 2);
             Assert.IsTrue(boardTileA.Y == 2);
-            Assert.IsTrue(boardTileA.UntransposedY == 3);
+            Assert.IsTrue(transposer.BoardTilesAndTheirOriginalCoordinates[boardTileA].Y == 3);
 
             BoardTile boardTileB = board.GetBoardTileAtCoordinates(4, 2);
             Assert.IsTrue(boardTileB.X == 4);
-            Assert.IsTrue(boardTileB.UntransposedX == 2);
+            Assert.IsTrue(transposer.BoardTilesAndTheirOriginalCoordinates[boardTileB].X == 2);
             Assert.IsTrue(boardTileB.Y == 2);
-            Assert.IsTrue(boardTileB.UntransposedY == 4);
+            Assert.IsTrue(transposer.BoardTilesAndTheirOriginalCoordinates[boardTileB].Y == 4);
         }
     }
 }

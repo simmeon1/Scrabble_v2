@@ -1,28 +1,49 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ClassLibrary
 {
     public class BoardTransposer
     {
-        public static void Transpose(Board board)
+        public bool BoardIsTransposed { get; private set; }
+        public Dictionary<BoardTile, XYCoordinates> BoardTilesAndTheirOriginalCoordinates { get; }
+        private Board Board { get; }
+        public BoardTransposer(Board board)
         {
-            BoardTile[][] newBoard = new BoardTile[board.ColumnCount][];
-            for (int y = 0; y < board.ColumnCount; y++)
+            Board = board;
+            BoardIsTransposed = false;
+            BoardTilesAndTheirOriginalCoordinates = new Dictionary<BoardTile, XYCoordinates>();
+            for (int x = 0; x < Board.RowCount; x++)
             {
-                newBoard[y] = new BoardTile[board.RowCount];
-                for (int x = 0; x < board.RowCount; x++)
+                for (int y = 0; y < Board.ColumnCount; y++)
                 {
-                    BoardTile boardTile = board.Tiles[x][y];
+                    BoardTile boardTile = Board.Tiles[x][y];
+                    BoardTilesAndTheirOriginalCoordinates.Add(boardTile, new XYCoordinates(boardTile.X, boardTile.Y));
+                }
+            }
+        }
+
+
+        public void TransposeBoard()
+        {
+            BoardTile[][] newBoard = new BoardTile[Board.ColumnCount][];
+            for (int y = 0; y < Board.ColumnCount; y++)
+            {
+                newBoard[y] = new BoardTile[Board.RowCount];
+                for (int x = 0; x < Board.RowCount; x++)
+                {
+                    BoardTile boardTile = Board.Tiles[x][y];
                     newBoard[y][x] = boardTile;
                     int temp = boardTile.X;
                     boardTile.X = boardTile.Y;
                     boardTile.Y = temp;
                 }
             }
-            board.Tiles = newBoard;
-            int temp2 = board.RowCount;
-            board.RowCount = board.ColumnCount;
-            board.ColumnCount = temp2;
+            Board.Tiles = newBoard;
+            int temp2 = Board.RowCount;
+            Board.RowCount = Board.ColumnCount;
+            Board.ColumnCount = temp2;
+            BoardIsTransposed = !BoardIsTransposed;
         }
     }
 }

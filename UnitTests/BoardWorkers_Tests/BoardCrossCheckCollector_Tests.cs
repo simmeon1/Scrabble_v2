@@ -35,14 +35,15 @@ namespace UnitTests
             Assert.IsTrue(crossChecksForNormalBoard[board.GetBoardTileAtCoordinates(3, 5)].Count == 5);
             Assert.IsTrue(crossChecksForNormalBoard[board.GetBoardTileAtCoordinates(3, 6)].Count == 3);
 
-            BoardTransposer.Transpose(board);
+            BoardTransposer transposer = new(board);
+            transposer.TransposeBoard();
 
             Dictionary<BoardTile, HashSet<char>> crossChecksForTransposedBoard = boardCrossCheckCollector.GetCrossChecksForBoardTiles(boardAnchors);
 
             Assert.IsTrue(crossChecksForTransposedBoard[board.GetBoardTileAtCoordinates(1, 2)].Count == 0);
             Assert.IsTrue(crossChecksForTransposedBoard[board.GetBoardTileAtCoordinates(7, 2)].Count == 1);
 
-            BoardTransposer.Transpose(board);
+            transposer.TransposeBoard();
             Assert.IsTrue(board.RowCount == 3);
             Assert.IsTrue(board.ColumnCount == 7);
             Assert.IsTrue(board.GetBoardTileAtCoordinates(2, 3).CharTile.Letter == 'O');
