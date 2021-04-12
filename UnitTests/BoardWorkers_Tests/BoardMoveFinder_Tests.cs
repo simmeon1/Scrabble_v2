@@ -25,7 +25,7 @@ namespace UnitTests
             playerRack.AddRange(englishAlphabet);
 
             BoardMoveFinder boardMoveFinder = new(board, Globals.EnglishDawg);
-            List<string> words = boardMoveFinder.GetPossibleMoves(anchor, playerRack);
+            List<BoardWord> words = boardMoveFinder.GetPossibleMoves(anchor, playerRack);
             Assert.IsTrue(words.Count == 60);
         }
 
@@ -45,7 +45,7 @@ namespace UnitTests
             playerRack.AddRange(englishAlphabet);
 
             BoardMoveFinder boardMoveFinder = new(board, Globals.EnglishDawg);
-            List<string> words = boardMoveFinder.GetPossibleMoves(anchor, playerRack);
+            List<BoardWord> words = boardMoveFinder.GetPossibleMoves(anchor, playerRack);
             Assert.IsTrue(words.Count == 89);
         }
 
@@ -64,7 +64,7 @@ namespace UnitTests
             playerRack.AddRange(englishAlphabet);
 
             BoardMoveFinder boardMoveFinder = new(board, Globals.EnglishDawg);
-            List<string> words = boardMoveFinder.GetPossibleMoves(anchor, playerRack);
+            List<BoardWord> words = boardMoveFinder.GetPossibleMoves(anchor, playerRack);
             Assert.IsTrue(words.Count == 13);
         }
     }

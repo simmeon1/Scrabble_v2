@@ -10,29 +10,30 @@ namespace ClassLibrary
     {
         private Board Board { get; set; }
         private Dawg<bool> Dawg { get; set; }
-        private List<string> ValidWords { get; set; }
+        private List<BoardWord> ValidWords { get; set; }
         private List<char> PlayerRack { get; set; }
         private BoardTile StartingBoardTile { get; set; }
-        private bool LeftPartIsAlreadyProvided { get; set; }
+        private bool LeftPartIsAlreadyProvided { get; set;  }
         private Dictionary<BoardTile, HashSet<char>> BoardTilesAndTheirCrossChecks { get; set; }
-        public BoardCrossCheckCollector BoardCrossCheckCollector { get; set; }
+        private BoardCrossCheckCollector BoardCrossCheckCollector { get; set; }
+        private BoardWordRetriever BoardWordRetriever { get; set; }
 
         public BoardMoveFinder(Board board, Dawg<bool> dawg)
         {
             Board = board;
             Dawg = dawg;
             BoardCrossCheckCollector = new BoardCrossCheckCollector(board, dawg);
+            BoardWordRetriever = new BoardWordRetriever(Board);
         }
 
-        public List<string> GetPossibleMoves(BoardTile anchor, List<char> playerRack)
+        public List<BoardWord> GetPossibleMoves(BoardTile anchor, List<char> playerRack)
         {
-            ValidWords = new List<string>();
+            ValidWords = new List<BoardWord>();
             PlayerRack = playerRack;
             StartingBoardTile = anchor;
             BoardTilesAndTheirCrossChecks = new Dictionary<BoardTile, HashSet<char>>();
 
-            BoardWordRetriever boardWordRetriever = new(Board);
-            HorizontalBoardWord wordToTheLeftOfAnchor = boardWordRetriever.GetHorizontalWordTilesAtCoordinates(StartingBoardTile.X, StartingBoardTile.Y - 1);
+            HorizontalBoardWord wordToTheLeftOfAnchor = BoardWordRetriever.GetHorizontalWordTilesAtCoordinates(StartingBoardTile.X, StartingBoardTile.Y - 1);
             string partialWord = wordToTheLeftOfAnchor?.GetWord() ?? "";
             LeftPartIsAlreadyProvided = partialWord.Length > 0;
 
@@ -123,7 +124,8 @@ namespace ClassLibrary
             if (BoardTilesAndTheirCrossChecks.ContainsKey(boardTile))
             {
                 BoardTilesAndTheirCrossChecks[boardTile] = crossChecks;
-            } else
+            }
+            else
             {
                 BoardTilesAndTheirCrossChecks.Add(boardTile, crossChecks);
             }
@@ -137,8 +139,11 @@ namespace ClassLibrary
         private void AddWordToValidWordsIfValid(string partialWord)
         {
             if (!Globals.EnglishDawg[partialWord]) return;
-            ValidWords.Add(partialWord);
-            Debug.WriteLine(partialWord);
+
+            HorizontalBoardWord wordTiles = BoardWordRetriever.GetHorizontalWordTilesAtCoordinates(StartingBoardTile.X, StartingBoardTile.Y);
+            ValidWords.Add(wordTiles);
+            //string word = wordTiles.GetWord();
+            //Debug.WriteLine(partialWord);
         }
     }
 }

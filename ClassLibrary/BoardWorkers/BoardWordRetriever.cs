@@ -16,8 +16,8 @@ namespace ClassLibrary
         public HorizontalBoardWord GetHorizontalWordTilesAtCoordinates(int X, int Y)
         {
             if (!Board.CoordinatesExist(X, Y)) return null;
-            List<BoardTile> boardTilesWithCharTiles = new();
 
+            List<BoardTile> boardTilesWithCharTiles = new();
             if (Board.GetBoardTileAtCoordinates(X, Y).CharTile == null) return new HorizontalBoardWord(boardTilesWithCharTiles);
 
             int i = Y;
