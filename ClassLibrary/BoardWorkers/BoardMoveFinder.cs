@@ -42,7 +42,7 @@ namespace ClassLibrary
             BoardTileCollection boardAnchors = boardAnchorCollector.GetAnchors(Board);
 
             DawgNode node = GetDawgNode(partialWord);
-            BoardNonAnchorTileCounter boardNonAnchorTileCounter = new BoardNonAnchorTileCounter(Board);
+            BoardNonAnchorTileCounter boardNonAnchorTileCounter = new(Board);
             int limit = boardNonAnchorTileCounter.GetNumberOfNonAnchorTilesToTheLeftOfABoardTile(StartingBoardTile, boardAnchors);
             LeftPart(node, limit, anchor);
             return ValidWords;
