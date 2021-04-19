@@ -18,14 +18,10 @@ namespace UnitTests
             board.PlaceCharTile(1, 5, 'E');
 
             BoardTile anchor = board.GetBoardTileAtCoordinates(1, 6);
-            List<char> englishAlphabet = Globals.GetEnglishCharactersArray().ToList();
-            List<char> playerRack = englishAlphabet;
-            playerRack.AddRange(englishAlphabet);
-            playerRack.AddRange(englishAlphabet);
-            playerRack.AddRange(englishAlphabet);
 
+            PlayerRackWithUnlimitedCharTiles playerRackWithUnlimitedCharTiles = new();
             BoardMoveFinder boardMoveFinder = new(board, Globals.EnglishDawg);
-            List<BoardWord> words = boardMoveFinder.GetPossibleMoves(anchor, playerRack);
+            List<BoardWord> words = boardMoveFinder.GetPossibleMoves(anchor, playerRackWithUnlimitedCharTiles);
             Assert.IsTrue(words.Count == 60);
         }
 
@@ -39,13 +35,10 @@ namespace UnitTests
             board.PlaceCharTile(1, 9, 'E');
 
             BoardTile anchor = board.GetBoardTileAtCoordinates(1, 5);
-            List<char> englishAlphabet = Globals.GetEnglishCharactersArray().ToList();
-            List<char> playerRack = englishAlphabet;
-            playerRack.AddRange(englishAlphabet);
-            playerRack.AddRange(englishAlphabet);
 
+            PlayerRackWithUnlimitedCharTiles playerRackWithUnlimitedCharTiles = new();
             BoardMoveFinder boardMoveFinder = new(board, Globals.EnglishDawg);
-            List<BoardWord> words = boardMoveFinder.GetPossibleMoves(anchor, playerRack);
+            List<BoardWord> words = boardMoveFinder.GetPossibleMoves(anchor, playerRackWithUnlimitedCharTiles);
             Assert.IsTrue(words.Count == 89);
         }
 
@@ -59,13 +52,30 @@ namespace UnitTests
             board.PlaceCharTile(1, 10, 'E');
 
             BoardTile anchor = board.GetBoardTileAtCoordinates(1, 6);
-            List<char> englishAlphabet = Globals.GetEnglishCharactersArray().ToList();
-            List<char> playerRack = englishAlphabet;
-            playerRack.AddRange(englishAlphabet);
+
+            PlayerRackWithUnlimitedCharTiles playerRackWithUnlimitedCharTiles = new();
 
             BoardMoveFinder boardMoveFinder = new(board, Globals.EnglishDawg);
-            List<BoardWord> words = boardMoveFinder.GetPossibleMoves(anchor, playerRack);
+            List<BoardWord> words = boardMoveFinder.GetPossibleMoves(anchor, playerRackWithUnlimitedCharTiles);
             Assert.IsTrue(words.Count == 13);
+        }
+
+        private class PlayerRackWithUnlimitedCharTiles : IPlayerRack
+        {
+            public void AddCharTile(char rackChar)
+            {
+                return;
+            }
+
+            public bool ContainsCharTile(char edge)
+            {
+                return true;
+            }
+
+            public char TakeCharTile(char edge)
+            {
+                return edge;
+            }
         }
     }
 }

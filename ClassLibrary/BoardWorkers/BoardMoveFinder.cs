@@ -11,7 +11,7 @@ namespace ClassLibrary
         private Board Board { get; set; }
         private Dawg<bool> Dawg { get; set; }
         private List<BoardWord> ValidWords { get; set; }
-        private List<char> PlayerRack { get; set; }
+        private IPlayerRack PlayerRack { get; set; }
         private BoardTile StartingBoardTile { get; set; }
         private bool LeftPartIsAlreadyProvided { get; set;  }
         private Dictionary<BoardTile, HashSet<char>> BoardTilesAndTheirCrossChecks { get; set; }
@@ -26,7 +26,7 @@ namespace ClassLibrary
             BoardWordRetriever = new BoardWordRetriever(Board);
         }
 
-        public List<BoardWord> GetPossibleMoves(BoardTile anchor, List<char> playerRack)
+        public List<BoardWord> GetPossibleMoves(BoardTile anchor, IPlayerRack playerRack)
         {
             ValidWords = new List<BoardWord>();
             PlayerRack = playerRack;
@@ -69,15 +69,14 @@ namespace ClassLibrary
             if (LeftPartIsAlreadyProvided || limit <= 0) return;
             foreach (char edge in node.Edges)
             {
-                if (!PlayerRack.Contains(edge)) continue;
+                if (!PlayerRack.ContainsCharTile(edge)) continue;
 
-                char rackChar = PlayerRack.FirstOrDefault(t => t == edge);
-                PlayerRack.Remove(rackChar);
+                char rackChar = PlayerRack.TakeCharTile(edge);
                 string partialWord = node.Word;
                 string partialWordPlusEdge = partialWord + rackChar.ToString();
                 DawgNode nextNode = GetDawgNode(partialWordPlusEdge);
                 LeftPart(nextNode, limit - 1, anchor);
-                PlayerRack.Add(rackChar);
+                PlayerRack.AddCharTile(rackChar);
             }
         }
 
@@ -91,16 +90,15 @@ namespace ClassLibrary
                 foreach (char edge in node.Edges)
                 {
                     HashSet<char> boardTileCrossChecks = GetBoardTileCrossChecks(boardTile);
-                    if (!PlayerRack.Contains(edge) || (boardTileCrossChecks != null && !boardTileCrossChecks.Contains(edge))) continue;
+                    if (!PlayerRack.ContainsCharTile(edge) || (boardTileCrossChecks != null && !boardTileCrossChecks.Contains(edge))) continue;
 
-                    char rackChar = PlayerRack.FirstOrDefault(t => t == edge);
-                    PlayerRack.Remove(rackChar);
+                    char rackChar = PlayerRack.TakeCharTile(edge);
                     string partialWordPlusEdge = partialWord + rackChar.ToString();
                     DawgNode nextNode = GetDawgNode(partialWordPlusEdge);
                     BoardTile nextBoardTile = Board.GetBoardTileAtCoordinates(boardTile.X, boardTile.Y + 1);
                     SetBoardTileCrossChecks(nextBoardTile);
                     ExtendRight(nextNode, nextBoardTile);
-                    PlayerRack.Add(rackChar);
+                    PlayerRack.AddCharTile(rackChar);
                 }
             }
             else
