@@ -17,10 +17,10 @@ namespace UnitTests
             board.PlaceCharTile(2, 5, 'N');
             board.PlaceCharTile(2, 6, 'G');
 
-            BoardAnchorCollector boardAnchorCollector = new BoardAnchorCollector();
+            BoardAnchorCollector boardAnchorCollector = new();
             BoardTileCollection boardAnchors = boardAnchorCollector.GetAnchors(board);
 
-            BoardCrossCheckCollector boardCrossCheckCollector = new BoardCrossCheckCollector(board, Globals.BoingDawg);
+            BoardCrossCheckCollector boardCrossCheckCollector = new(board, UnitTestGlobals.BoingDawgWithAlphabet);
             Dictionary<BoardTile, HashSet<char>> crossChecksForNormalBoard = boardCrossCheckCollector.GetCrossChecksForBoardTiles(boardAnchors);
 
             Assert.IsTrue(crossChecksForNormalBoard.Count == 12);
@@ -62,7 +62,7 @@ namespace UnitTests
             board.PlaceCharTile(2, 6, 'G');
 
             BoardAnchorCollector boardAnchorCollector = new();
-            BoardCrossCheckCollector boardCrossCheckCollector = new BoardCrossCheckCollector(board, Globals.EnglishDawg);
+            BoardCrossCheckCollector boardCrossCheckCollector = new(board, UnitTestGlobals.EnglishDawgWithAlphabet);
             Dictionary<BoardTile, HashSet<char>> anchorsWithCrossChecks = boardCrossCheckCollector.GetCrossChecksForBoardTiles(boardAnchorCollector.GetAnchors(board));
             Assert.IsTrue(anchorsWithCrossChecks.Count > 0);
         }

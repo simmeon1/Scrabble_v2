@@ -1,7 +1,7 @@
 using ClassLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using System.Linq;
+using UnitTests.MockClasses;
 
 namespace UnitTests
 {
@@ -20,7 +20,7 @@ namespace UnitTests
             BoardTile anchor = board.GetBoardTileAtCoordinates(1, 6);
 
             PlayerRackWithUnlimitedCharTiles playerRackWithUnlimitedCharTiles = new();
-            BoardMoveFinder boardMoveFinder = new(board, Globals.EnglishDawg);
+            BoardMoveFinder boardMoveFinder = new(board, UnitTestGlobals.EnglishDawgWithAlphabet);
             List<BoardWord> words = boardMoveFinder.GetPossibleMoves(anchor, playerRackWithUnlimitedCharTiles);
             Assert.IsTrue(words.Count == 60);
         }
@@ -37,7 +37,7 @@ namespace UnitTests
             BoardTile anchor = board.GetBoardTileAtCoordinates(1, 5);
 
             PlayerRackWithUnlimitedCharTiles playerRackWithUnlimitedCharTiles = new();
-            BoardMoveFinder boardMoveFinder = new(board, Globals.EnglishDawg);
+            BoardMoveFinder boardMoveFinder = new(board, UnitTestGlobals.EnglishDawgWithAlphabet);
             List<BoardWord> words = boardMoveFinder.GetPossibleMoves(anchor, playerRackWithUnlimitedCharTiles);
             Assert.IsTrue(words.Count == 89);
         }
@@ -55,27 +55,9 @@ namespace UnitTests
 
             PlayerRackWithUnlimitedCharTiles playerRackWithUnlimitedCharTiles = new();
 
-            BoardMoveFinder boardMoveFinder = new(board, Globals.EnglishDawg);
+            BoardMoveFinder boardMoveFinder = new(board, UnitTestGlobals.EnglishDawgWithAlphabet);
             List<BoardWord> words = boardMoveFinder.GetPossibleMoves(anchor, playerRackWithUnlimitedCharTiles);
             Assert.IsTrue(words.Count == 13);
-        }
-
-        private class PlayerRackWithUnlimitedCharTiles : IPlayerRack
-        {
-            public void AddCharTile(char rackChar)
-            {
-                return;
-            }
-
-            public bool ContainsCharTile(char edge)
-            {
-                return true;
-            }
-
-            public char TakeCharTile(char edge)
-            {
-                return edge;
-            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using DawgSharp;
+﻿using ClassLibrary.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,11 +6,11 @@ namespace ClassLibrary
 {
     public class BoardCrossCheckCollector
     {
-        public Dawg<bool> Dawg { get; set; }
+        public IDawgWithAlphabet DawgWithAlphabet { get; set; }
         public Board Board { get; set; }
-        public BoardCrossCheckCollector(Board board, Dawg<bool> dawg)
+        public BoardCrossCheckCollector(Board board, IDawgWithAlphabet dawg)
         {
-            Dawg = dawg;
+            DawgWithAlphabet = dawg;
             Board = board;
         }
 
@@ -25,7 +25,7 @@ namespace ClassLibrary
         public Dictionary<BoardTile, HashSet<char>> GetCrossChecksForBoardTiles(BoardTileCollection boardTileCollection)
         {
             BoardWordRetriever boardWordRetriever = new(Board);
-            char[] charsFromAlphabet = Globals.GetEnglishCharactersArray();
+            char[] charsFromAlphabet = DawgWithAlphabet.GetAlphabet();
             HashSet<char> charsFromAlphabetHashSet = charsFromAlphabet.ToHashSet();
 
             Dictionary<BoardTile, HashSet<char>> tilesAndTheirCrossChecks = new();
@@ -47,7 +47,7 @@ namespace ClassLibrary
                 {
                     Board.PlaceCharTile(boardTile.X, boardTile.Y, ch);
                     VerticalBoardWord verticalWord = boardWordRetriever.GetVerticalWordTilesAtCoordinates(boardTile.X, boardTile.Y);
-                    if (Dawg[verticalWord.GetWord()] == true) tilesAndTheirCrossChecks[boardTile].Add(ch);
+                    if (DawgWithAlphabet.IsWordValid(verticalWord.GetWord())) tilesAndTheirCrossChecks[boardTile].Add(ch);
                     Board.RemoveCharTile(boardTile.X, boardTile.Y);
                 }
             }

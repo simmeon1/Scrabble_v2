@@ -1,7 +1,5 @@
-﻿using DawgSharp;
-using System;
+﻿using ClassLibrary.Interfaces;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace ClassLibrary
@@ -9,7 +7,7 @@ namespace ClassLibrary
     public class BoardMoveFinder
     {
         private Board Board { get; set; }
-        private Dawg<bool> Dawg { get; set; }
+        private IDawgWithAlphabet DawgWithAlphabet { get; set; }
         private List<BoardWord> ValidWords { get; set; }
         private IPlayerRack PlayerRack { get; set; }
         private BoardTile StartingBoardTile { get; set; }
@@ -18,11 +16,11 @@ namespace ClassLibrary
         private BoardCrossCheckCollector BoardCrossCheckCollector { get; set; }
         private BoardWordRetriever BoardWordRetriever { get; set; }
 
-        public BoardMoveFinder(Board board, Dawg<bool> dawg)
+        public BoardMoveFinder(Board board, IDawgWithAlphabet dawgWithAlphabet)
         {
             Board = board;
-            Dawg = dawg;
-            BoardCrossCheckCollector = new BoardCrossCheckCollector(board, dawg);
+            DawgWithAlphabet = dawgWithAlphabet;
+            BoardCrossCheckCollector = new BoardCrossCheckCollector(board, dawgWithAlphabet);
             BoardWordRetriever = new BoardWordRetriever(Board);
         }
 
@@ -51,13 +49,12 @@ namespace ClassLibrary
 
         private DawgNode GetDawgNode(string word)
         {
-            if (word.IsNullOrEmpty()) return new DawgNode(word, Globals.GetEnglishCharactersArray().ToHashSet());
+            if (word.IsNullOrEmpty()) return new DawgNode(word, DawgWithAlphabet.GetAlphabet().ToHashSet());
 
-            IEnumerable<KeyValuePair<string, bool>> wordsContainingPrefix = Dawg.MatchPrefix(word);
+            IEnumerable<string> wordsContainingPrefix = DawgWithAlphabet.GetWordsWithGivenPrefix(prefix: word);
             HashSet<char> lettersThatCanFollowPrefix = new();
-            foreach (KeyValuePair<string, bool> wordContainingPrefix_Pair in wordsContainingPrefix)
+            foreach (string wordContainingPrefix in wordsContainingPrefix)
             {
-                string wordContainingPrefix = wordContainingPrefix_Pair.Key;
                 if (!wordContainingPrefix.Equals(word)) lettersThatCanFollowPrefix.Add(wordContainingPrefix[word.Length]);
             }
             return new DawgNode(word, lettersThatCanFollowPrefix);
@@ -136,12 +133,10 @@ namespace ClassLibrary
 
         private void AddWordToValidWordsIfValid(string partialWord)
         {
-            if (!Globals.EnglishDawg[partialWord]) return;
-
+            if (!DawgWithAlphabet.IsWordValid(partialWord)) return;
             HorizontalBoardWord wordTiles = BoardWordRetriever.GetHorizontalWordTilesAtCoordinates(StartingBoardTile.X, StartingBoardTile.Y);
             ValidWords.Add(wordTiles);
-            //string word = wordTiles.GetWord();
-            //Debug.WriteLine(partialWord);
+            //Debug.WriteLine(wordTiles.GetWord());
         }
     }
 }

@@ -42,7 +42,7 @@ namespace UnitTests
         [TestMethod]
         public void BoingDawg_ReadDawg_CountMustBe64()
         {
-            Dawg<bool> boingDawg = Globals.BoingDawg;
+            Dawg<bool> boingDawg = UnitTestGlobals.LoadBoingDawgFile();
             Assert.IsTrue(boingDawg.Count() == 64);
         }
     }

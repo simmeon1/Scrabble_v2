@@ -91,14 +91,14 @@ namespace UnitTests
         public void NewBoard_CreationWithBadRowCount_IncorrectRowNumberExceptionIsThrown()
         {
             Board board;
-            SharedFunctions.InvokeActionAndAssertThatCorrectExceptionMessageIsThrown(() => board = new Board(0, 1), ExceptionMessages.BoardMustHaveAtLeastOneRow);
+            UnitTestGlobals.InvokeActionAndAssertThatCorrectExceptionMessageIsThrown(() => board = new Board(0, 1), ExceptionMessages.BoardMustHaveAtLeastOneRow);
         }
 
         [TestMethod]
         public void NewBoard_CreationWithBadColumnCount_IncorrectColumnNumberExceptionIsThrown()
         {
             Board board;
-            SharedFunctions.InvokeActionAndAssertThatCorrectExceptionMessageIsThrown(() => board = new Board(1, -1), ExceptionMessages.BoardMustHaveAtLeastOneColumn);
+            UnitTestGlobals.InvokeActionAndAssertThatCorrectExceptionMessageIsThrown(() => board = new Board(1, -1), ExceptionMessages.BoardMustHaveAtLeastOneColumn);
         }
     }
 }

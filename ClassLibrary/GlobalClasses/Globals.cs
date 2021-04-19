@@ -10,11 +10,9 @@ namespace ClassLibrary
 {
     public static class Globals
     {
-        public static Dawg<bool> BoingDawg = Dawg<bool>.Load(File.Open("boingDAWG.bin", FileMode.Open));
-        public static Dawg<bool> EnglishDawg = Dawg<bool>.Load(File.Open("englishDawg.bin", FileMode.Open));
-        public static char[] GetEnglishCharactersArray()
+        public static Dawg<bool> LoadDawgFile(string path)
         {
-            return "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+            return Dawg<bool>.Load(File.Open(path, FileMode.Open));
         }
     }
 }
